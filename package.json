@@ -4,11 +4,19 @@
   "description": "Fluent Parser Combinator",
   "main": "index.mjs",
   "scripts": {
-    "start": "node --experimental-modules index.mjs"
+    "start": "node --experimental-modules index.mjs",
+    "build": "tree-sitter generate && node-gyp build",
+    "test": "tree-sitter test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stasm/fluent-kombi.git"
+  },
+  "dependencies": {
+    "nan": "^2.4.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.11.3"
   },
   "author": "Staś Małolepszy <stas@mozilla.com>",
   "license": "ISC",

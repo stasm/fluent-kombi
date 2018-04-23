@@ -1,0 +1,14 @@
+======
+Simple
+======
+
+key= a
+     c
+   .attr = b
+     c
+
+---
+
+(body
+  (message)
+)

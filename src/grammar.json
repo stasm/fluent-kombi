@@ -1,0 +1,13 @@
+{
+  "name": "fluent",
+  "rules": {
+    "body": {
+      "type": "STRING",
+      "value": "a"
+    }
+  },
+  "extras": [],
+  "conflicts": [],
+  "externals": [],
+  "inline": []
+}
