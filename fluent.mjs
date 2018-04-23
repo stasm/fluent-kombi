@@ -16,7 +16,7 @@ var blankLine = sequence(
     maybe(inlineSpace), lineBreak);
 var breakIndent = sequence(
     lineBreak,
-    repeat1(inlineSpace));
+    inlineSpace);
 
 var inlineChar = either(
     char(" "),
