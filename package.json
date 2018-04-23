@@ -1,0 +1,19 @@
+{
+  "name": "fluent-kombi",
+  "version": "0.0.1",
+  "description": "Fluent Parser Combinator",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node --experimental-modules index.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stasm/fluent-kombi.git"
+  },
+  "author": "Staś Małolepszy <stas@mozilla.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stasm/fluent-kombi/issues"
+  },
+  "homepage": "https://github.com/stasm/fluent-kombi#readme"
+}
