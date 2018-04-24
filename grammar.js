@@ -22,7 +22,7 @@ module.exports = grammar({
       "key",
       optional($.inlineSpace),
       "=",
-      optional($.inlineSpace),
+      // optional($.inlineSpace),
       $.pattern,
       repeat($.attribute)
     ),
