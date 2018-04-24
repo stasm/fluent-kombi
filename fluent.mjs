@@ -104,9 +104,40 @@ var message =
         attributes: parsed[5],
     }));
 
+var commentContent =
+    sequence(
+        inlineSpace,
+        regex(/.*/))
+    .map(([space, content]) => content);
+
+var messageCommentLine =
+    sequence(
+        char("#"),
+        maybe(commentContent))
+    .map(([sigil,  content]) => content);
+
+var messageComment =
+    sequence(
+        messageCommentLine,
+        repeat(
+            sequence(
+                lineBreak,
+                messageCommentLine)))
+    .map(([first, rest]) => ({
+        type: "MessageComment",
+        content: join([first, ...rest.map(join)])
+    }));
+
+var comment =
+    either(
+        messageComment,
+        //groupComment,
+        //resourceComment
+    )
+
 var entry =
     either(
-        // comment,
+        comment,
         // term,
         message);
 

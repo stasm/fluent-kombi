@@ -3,10 +3,14 @@ import fluent from "./fluent.mjs";
 
 const ftl = `
 
+# Hello
+# There
 ą=ź
 foo=b
     b
+    .attr = c
 
+# Hello
     .attr = c
 
 
