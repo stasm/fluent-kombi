@@ -51,7 +51,7 @@ module.exports = grammar({
       $.lineBreak
     ),
     inlineChar: $ => choice(" ", "a", "b", "c"),
-    lineBreak: $ => repeat1(choice("\r", "\n")),
+    lineBreak: $ => choice("\r", "\n", "\r\n"),
     inlineSpace: $ => repeat1(choice(" ", "\t"))
   }
 });
