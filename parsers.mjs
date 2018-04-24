@@ -83,16 +83,11 @@ export function not(parser) {
 }
 
 export function and(...parsers) {
-    return new Parser(stream => {
-        let result;
-        for (const parser of parsers) {
-            result = parser.run(stream);
-            if (result instanceof Failure) {
-                return new Failure("all failed", stream);
-            }
-        }
-        return result;
-    });
+    const final = parsers.pop();
+    return sequence(
+        ...parsers.map(lookahead),
+        final).map(
+            results => results[results.length - 1]);
 }
 
 export function either(...parsers) {
