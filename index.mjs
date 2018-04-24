@@ -2,10 +2,14 @@ import util from "util";
 import fluent from "./fluent.mjs";
 
 const ftl = `
+
 key= a
      c
    .attr = b
      c
+
+key= b
+
 `;
 
 fluent.run(ftl).fold(pretty, console.error);

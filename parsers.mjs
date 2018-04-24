@@ -101,7 +101,7 @@ export function repeat1(parser) {
 }
 
 export function string(str) {
-    return sequence(...str.split('').map(char));
+    return sequence(...str.split('').map(char)).map(chars => chars.join(""));
 }
 
 export function not(parser) {
