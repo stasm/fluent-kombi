@@ -69,6 +69,32 @@ export function regex(re) {
     });
 }
 
+export function range(charset) {
+    return regex(new RegExp(`[${charset}]`));
+}
+
+export function not(parser) {
+    return new Parser(stream => parser.run(stream).fold(
+        (value, s) => new Failure('not failed', stream),
+        (value, s) =>
+            stream.length > 0
+                ? new Success(stream.head(), stream.move(1))
+                : new Failure('unexpected end', stream)));
+}
+
+export function and(...parsers) {
+    return new Parser(stream => {
+        let result;
+        for (const parser of parsers) {
+            result = parser.run(stream);
+            if (result instanceof Failure) {
+                return new Failure("all failed", stream);
+            }
+        }
+        return result;
+    });
+}
+
 export function either(...parsers) {
     return new Parser(stream => {
         for (const parser of parsers) {
@@ -82,7 +108,7 @@ export function either(...parsers) {
 }
 
 export function always(value) {
-    return new Parser((stream) => new Success(value, stream));
+    return new Parser(stream => new Success(value, stream));
 }
 
 export function never(value) {
@@ -127,13 +153,4 @@ export function repeat1(parser) {
 
 export function string(str) {
     return sequence(...str.split('').map(char)).map(chars => chars.join(""));
-}
-
-export function not(parser) {
-    return new Parser(stream => parser.run(stream).fold(
-        (value, s) => new Failure('not failed', stream),
-        (value, s) =>
-            stream.length > 0
-                ? new Success(stream.head(), stream.move(1))
-                : new Failure('unexpected end', stream)));
 }

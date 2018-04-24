@@ -1,7 +1,10 @@
 import {
+    and,
     char,
     either,
     maybe,
+    not,
+    range,
     regex,
     repeat,
     repeat1,
@@ -38,6 +41,16 @@ var breakIndent =
         lineBreak,
         inlineSpace)
     .map(join);
+
+var identifier =
+    sequence(
+        range("a-zA-Z"),
+        repeat(
+            range("a-zA-Z0-9_-")))
+    .map(([first, rest]) => ({
+        type: "Identifier",
+        name: `${first}${join(rest)}`,
+    }));
 
 var inlineChar =
     either(
@@ -78,7 +91,7 @@ var attribute =
 
 var message =
     sequence(
-        regex(/[a-z]/),
+        identifier,
         maybe(inlineSpace),
         char("="),
         maybe(inlineSpace),
@@ -97,14 +110,29 @@ var entry =
         // term,
         message);
 
+var junk =
+    repeat1(
+        and(
+            not(identifier),
+            sequence(
+                regex(/.*/),
+                lineBreak)))
+    .map(parsed => ({
+        type: "Junk",
+        content: join(parsed.map(join))
+    }));
+
 export default
     sequence(
         repeat(blankLine),
         repeat(
-            sequence(
-                entry,
-                lineBreak,
-                repeat(blankLine))),
+            either(
+                sequence(
+                    entry,
+                    lineBreak,
+                    repeat(blankLine)),
+                sequence(
+                    junk))),
         maybe(entry))
     .map(([_, entries, finalEntry]) => ({
         type: "Resource",
