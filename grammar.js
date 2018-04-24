@@ -5,12 +5,12 @@ module.exports = grammar({
 
   rules: {
     body: $ => seq(
-      repeat($.blankLine),
+      repeat($._blankLine),
       repeat(
         seq(
           $.entry,
-          $.lineBreak,
-          repeat($.blankLine)
+          $._lineBreak,
+          repeat($._blankLine)
         )
       ),
       optional($.entry)
@@ -18,40 +18,39 @@ module.exports = grammar({
     entry: $ => choice(
       $.message
     ),
-    message: $ => seq(
+    message: $ => prec.left(seq(
       "key",
-      optional($.inlineSpace),
+      optional($._inlineSpace),
       "=",
-      // optional($.inlineSpace),
+      optional($._inlineSpace),
       $.pattern,
       repeat($.attribute)
-    ),
-    pattern: $ => $.text,
+    )),
+    pattern: $ => prec.left(seq($._letter, repeat($._textChar))),
     attribute: $ => seq(
-      $.breakIndent,
+      $._breakIndent,
       ".",
       "attr",
-      optional($.inlineSpace),
+      optional($._inlineSpace),
       "=",
-      optional($.inlineSpace),
+      optional($._inlineSpace),
       $.pattern
     ),
-    text: $ => repeat1(
-      choice(
-        $.inlineChar,
-        seq($.breakIndent, $.inlineChar)
-      )
+    _textChar: $ => choice(
+      $._letter,
+      " ",
+      seq($._breakIndent, $._letter)
     ),
-    breakIndent: $ => seq(
-      $.lineBreak,
-      $.inlineSpace
+    _breakIndent: $ => seq(
+      $._lineBreak,
+      $._inlineSpace
     ),
-    blankLine: $ => seq(
-      optional($.inlineSpace),
-      $.lineBreak
+    _blankLine: $ => seq(
+      optional($._inlineSpace),
+      $._lineBreak
     ),
-    inlineChar: $ => choice(" ", "a", "b", "c"),
-    lineBreak: $ => choice("\r", "\n", "\r\n"),
-    inlineSpace: $ => repeat1(choice(" ", "\t"))
+    _letter: $ => choice("a", "b", "c"),
+    _lineBreak: $ => choice("\r", "\n", "\r\n"),
+    _inlineSpace: $ => prec.left(repeat1(choice(" ", "\t")))
   }
 });

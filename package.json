@@ -2,7 +2,7 @@
   "name": "fluent-kombi",
   "version": "0.0.1",
   "description": "Fluent Parser Combinator",
-  "main": "index.mjs",
+  "main": "index.js",
   "scripts": {
     "start": "node --experimental-modules index.mjs",
     "build": "tree-sitter generate && node-gyp build",

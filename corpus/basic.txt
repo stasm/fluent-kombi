@@ -2,13 +2,16 @@
 Simple
 ======
 
-key= a
-     c
-   .attr = b
-     c
+key = a
+      b
+    .attr = a
+    c
 
 ---
 
 (body
-  (message)
-)
+  (entry
+    (message
+      (pattern)
+      (attribute
+        (pattern)))))
