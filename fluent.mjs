@@ -2,6 +2,7 @@ import {
     char,
     either,
     maybe,
+    regex,
     repeat,
     repeat1,
     sequence,
@@ -77,7 +78,7 @@ var attribute =
 
 var message =
     sequence(
-        string("key"),
+        regex(/[a-z]/),
         maybe(inlineSpace),
         char("="),
         maybe(inlineSpace),

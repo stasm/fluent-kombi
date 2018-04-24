@@ -16,6 +16,12 @@ export default class Stream {
         return this.iterable[this.cursor];
     }
 
+    exec(re) {
+        const sticky = new RegExp(re, "y");
+        sticky.lastIndex = this.cursor;
+        return sticky.exec(this.iterable);
+    }
+
     // Consume the stream by moving the cursor.
     move(distance) {
         return new Stream(

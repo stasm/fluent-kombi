@@ -3,12 +3,12 @@ import fluent from "./fluent.mjs";
 
 const ftl = `
 
-key= a
-     c
-   .attr = b
-     c
+a=a
+b=b
 
-key= b
+z = a
+    b
+    .attr = c
 
 `;
 

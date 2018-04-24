@@ -43,6 +43,24 @@ export function char(c) {
     return where(x => x === c);
 }
 
+export function regex(re) {
+    return new Parser(stream => {
+        if (stream.length === 0) {
+            return new Failure('unexpected end', stream);
+        }
+
+        const result = stream.exec(re);
+
+        if (result === null) {
+            return new Failure('regex did not match', stream);
+        }
+
+        const [match] = result;
+
+        return new Success(match, stream.move(match.length));
+    });
+}
+
 export function either(...list) {
     return new Parser(stream => {
         for (let i = 0; i < list.length; i++) {
