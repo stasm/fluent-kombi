@@ -1,10 +1,7 @@
+import * as FTL from "./ast.mjs";
 import {
     and, char, either, eof, maybe, not, range, regex, repeat, repeat1,
     sequence, string, } from "./parsers.mjs";
-import {
-    intoAttribute, intoComment, intoGroupComment, intoIdentifier, intoJunk,
-    intoMessage, intoResource, intoResourceComment }
-    from "./process.mjs";
 
 var lineEnd =
     either(
@@ -58,7 +55,7 @@ var identifier =
         range("a-zA-Z"),
         repeat(
             range("a-zA-Z0-9_-")).str).str
-    .map(intoIdentifier);
+    .into(FTL.Identifier);
 
 var attribute =
     sequence(
@@ -69,7 +66,7 @@ var attribute =
         char("=").hidden,
         maybe(inlineSpace).hidden,
         pattern)
-    .map(intoAttribute);
+    .spreadInto(FTL.Attribute);
 
 var message =
     sequence(
@@ -80,7 +77,7 @@ var message =
         pattern,
         repeat(attribute),
         lineEnd.hidden)
-    .map(intoMessage);
+    .spreadInto(FTL.Message);
 
 var anyCommentLine =
     sequence(
@@ -94,7 +91,7 @@ var comment =
             char("#").hidden,
             maybe(anyCommentLine),
             lineEnd).str).str
-    .map(intoComment);
+    .into(FTL.Comment);
 
 var groupComment =
     repeat1(
@@ -102,7 +99,7 @@ var groupComment =
             string("##").hidden,
             maybe(anyCommentLine),
             lineEnd).str).str
-    .map(intoGroupComment);
+    .into(FTL.GroupComment);
 
 var resourceComment =
     repeat1(
@@ -110,7 +107,7 @@ var resourceComment =
             string("###").hidden,
             maybe(anyCommentLine),
             lineEnd).str).str
-    .map(intoResourceComment);
+    .into(FTL.ResourceComment);
 
 var entry =
     either(
@@ -130,7 +127,7 @@ var junk =
             sequence(
                 regex(/.*/),
                 lineEnd).str)).str
-    .map(intoJunk);
+    .into(FTL.Junk);
 
 export default
     repeat(
@@ -138,4 +135,4 @@ export default
             blankLine.hidden,
             entry,
             junk))
-    .map(intoResource);
+    .into(FTL.Resource);

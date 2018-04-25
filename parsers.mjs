@@ -35,6 +35,14 @@ export class Parser {
                 .join(""));
     }
 
+    into(ctor) {
+        return this.map(value => new ctor(value));
+    }
+
+    spreadInto(ctor) {
+        return this.map(values => new ctor(...values));
+    }
+
   map(f) {
     return new Parser(stream => this.run(stream).map(f));
   }
