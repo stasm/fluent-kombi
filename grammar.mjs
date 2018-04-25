@@ -1,20 +1,9 @@
 import {
-    and,
-    char,
-    either,
-    maybe,
-    not,
-    range,
-    regex,
-    repeat,
-    repeat1,
-    sequence,
-    string,
-} from "./parsers.mjs";
-
-function join(values) {
-    return values.join("");
-}
+    and, char, either, maybe, not, range, regex, repeat, repeat1,
+    sequence, string, } from "./parsers.mjs";
+import {
+    intoAttribute, intoComment, intoIdentifier, intoMessage, join }
+    from "./process.mjs";
 
 var lineBreak =
     repeat1(
@@ -47,10 +36,7 @@ var identifier =
         range("a-zA-Z"),
         repeat(
             range("a-zA-Z0-9_-")))
-    .map(([first, rest]) => ({
-        type: "Identifier",
-        name: `${first}${join(rest)}`,
-    }));
+    .map(intoIdentifier);
 
 var inlineChar =
     either(
@@ -83,11 +69,7 @@ var attribute =
         char("="),
         maybe(inlineSpace),
         pattern)
-    .map(parsed => ({
-        type: "Attribute",
-        id: parsed[2],
-        value: parsed[6],
-    }));
+    .map(intoAttribute);
 
 var message =
     sequence(
@@ -97,47 +79,39 @@ var message =
         maybe(inlineSpace),
         pattern,
         repeat(attribute))
-    .map(parsed => ({
-        type: "Message",
-        id: parsed[0],
-        value: parsed[4],
-        attributes: parsed[5],
-    }));
+    .map(intoMessage);
 
-var commentContent =
+var anyCommentContent =
     sequence(
         inlineSpace,
         regex(/.*/))
     .map(([space, content]) => content);
 
-var messageCommentLine =
+var commentLine =
     sequence(
         char("#"),
-        maybe(commentContent))
+        maybe(anyCommentContent))
     .map(([sigil,  content]) => content);
 
-var messageComment =
+var comment =
     sequence(
-        messageCommentLine,
+        commentLine,
         repeat(
             sequence(
                 lineBreak,
-                messageCommentLine)))
-    .map(([first, rest]) => ({
-        type: "MessageComment",
-        content: join([first, ...rest.map(join)])
-    }));
+                commentLine)))
+    .map(intoComment);
 
-var comment =
+var anyComment =
     either(
-        messageComment,
+        comment,
         //groupComment,
         //resourceComment
     )
 
 var entry =
     either(
-        comment,
+        anyComment,
         // term,
         message);
 

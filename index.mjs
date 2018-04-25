@@ -1,5 +1,5 @@
 import util from "util";
-import fluent from "./fluent.mjs";
+import fluent from "./grammar.mjs";
 
 const ftl = `
 
