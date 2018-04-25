@@ -62,7 +62,8 @@ var identifier =
     sequence(
         range("a-zA-Z"),
         repeat(
-            range("a-zA-Z0-9_-")))
+            range("a-zA-Z0-9_-")).map(join))
+    .map(join)
     .map(intoIdentifier);
 
 var attribute =
@@ -98,7 +99,8 @@ var comment =
         sequence(
             char("#").hidden,
             maybe(anyCommentLine),
-            lineEnd).pruned)
+            lineEnd).pruned.map(join))
+    .map(join)
     .map(intoComment);
 
 var groupComment =
@@ -106,7 +108,8 @@ var groupComment =
         sequence(
             string("##").hidden,
             maybe(anyCommentLine),
-            lineEnd).pruned)
+            lineEnd).pruned.map(join))
+    .map(join)
     .map(intoGroupComment);
 
 var resourceComment =
@@ -114,7 +117,8 @@ var resourceComment =
         sequence(
             string("###").hidden,
             maybe(anyCommentLine),
-            lineEnd).pruned)
+            lineEnd).pruned.map(join))
+    .map(join)
     .map(intoResourceComment);
 
 var entry =
@@ -134,7 +138,8 @@ var junk =
             not(comment),
             sequence(
                 regex(/.*/),
-                lineEnd)))
+                lineEnd).map(join)))
+    .map(join)
     .map(intoJunk);
 
 export default
