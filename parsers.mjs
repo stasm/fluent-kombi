@@ -126,7 +126,8 @@ export function concat(p1, p2) {
 }
 
 export function sequence(...parsers) {
-    return parsers.reduce((acc, parser) => append(acc, parser), always([]));
+    return parsers.reduce(
+        (acc, parser) => append(acc, parser), always([])).pruned;
 }
 
 export function maybe(parser) {
@@ -144,7 +145,7 @@ export function lookahead(parser) {
 export function repeat(parser) {
     return new Parser(stream => parser.run(stream).fold(
             (value, s) => repeat(parser).map(rest => [value].concat(rest)).run(s),
-            (value, s) => new Success([], stream)))
+            (value, s) => new Success([], stream))).pruned;
 }
 
 export function repeat1(parser) {
@@ -154,7 +155,7 @@ export function repeat1(parser) {
 }
 
 export function string(str) {
-    return sequence(...str.split('').map(char)).map(chars => chars.join(""));
+    return sequence(...str.split('').map(char)).str;
 }
 
 export function eof() {
