@@ -21,6 +21,11 @@ export class Parser {
     return new Parser(stream => this.run(stream).map(f));
   }
 
+  // Hidden parsers match and consume the input, and always yield null.
+  get hidden() {
+      return this.map(() => null);
+  }
+
   bimap(s, f) {
     return new Parser(stream => this.run(stream).bimap(s, f));
   }

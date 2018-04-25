@@ -1,11 +1,18 @@
 import * as FTL from "./ast.mjs";
 
 export function join(values) {
-    return values.filter(v => v !== Symbol.for("EOF")).join("");
+    return values
+        .filter(v => v !== Symbol.for("EOF"))
+        .join("");
+}
+
+function nodes(list) {
+    // Filter out parsed results yielded by hidden parsers.
+    return list.filter(v => v !== null);
 }
 
 export function intoMessage(sequence) {
-    const [id, _1, _2, _3, value, attributes] = sequence;
+    const [id, value, attributes] = nodes(sequence);
     return new FTL.Message(id, value, attributes);
 }
 
@@ -15,28 +22,27 @@ export function intoIdentifier([first, rest]) {
 }
 
 export function intoAttribute(sequence) {
-    const [_0, _1, id, _3, _4, _5, value] = sequence;
+    const [id, value] = nodes(sequence);
     return new FTL.Attribute(id, value);
 }
 
 export function intoComment(lines) {
-    const content = join(lines.map(([sigil, ...text]) => join(text)));
+    const content = join(lines.map(nodes).map(join));
     return new FTL.Comment(content);
 }
 
 export function intoGroupComment(lines) {
-    const content = join(lines.map(([sigil, ...text]) => join(text)));
+    const content = join(lines.map(nodes).map(join));
     return new FTL.GroupComment(content);
 }
 
 export function intoResourceComment(lines) {
-    const content = join(lines.map(([sigil, ...text]) => join(text)));
+    const content = join(lines.map(nodes).map(join));
     return new FTL.ResourceComment(content);
 }
 
 export function intoResource(body) {
-    // Filter blank lines out.
-    const entries = body.filter(entry => entry instanceof FTL.BaseNode);
+    const entries = nodes(body);
     return new FTL.Resource(entries);
 }
 

@@ -67,24 +67,24 @@ var identifier =
 
 var attribute =
     sequence(
-        breakIndent,
-        char("."),
+        breakIndent.hidden,
+        char(".").hidden,
         identifier,
-        maybe(inlineSpace),
-        char("="),
-        maybe(inlineSpace),
+        maybe(inlineSpace).hidden,
+        char("=").hidden,
+        maybe(inlineSpace).hidden,
         pattern)
     .map(intoAttribute);
 
 var message =
     sequence(
         identifier,
-        maybe(inlineSpace),
-        char("="),
-        maybe(inlineSpace),
+        maybe(inlineSpace).hidden,
+        char("=").hidden,
+        maybe(inlineSpace).hidden,
         pattern,
         repeat(attribute),
-        lineEnd)
+        lineEnd.hidden)
     .map(intoMessage);
 
 var anyCommentLine =
@@ -96,7 +96,7 @@ var anyCommentLine =
 var comment =
     repeat1(
         sequence(
-            char("#"),
+            char("#").hidden,
             maybe(anyCommentLine),
             lineEnd))
     .map(intoComment);
@@ -104,7 +104,7 @@ var comment =
 var groupComment =
     repeat1(
         sequence(
-            string("##"),
+            string("##").hidden,
             maybe(anyCommentLine),
             lineEnd))
     .map(intoGroupComment);
@@ -112,7 +112,7 @@ var groupComment =
 var resourceComment =
     repeat1(
         sequence(
-            string("###"),
+            string("###").hidden,
             maybe(anyCommentLine),
             lineEnd))
     .map(intoResourceComment);
@@ -140,7 +140,7 @@ var junk =
 export default
     repeat(
         either(
-            blankLine,
+            blankLine.hidden,
             entry,
             junk))
     .map(intoResource);
