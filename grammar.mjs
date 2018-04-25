@@ -78,45 +78,29 @@ var message =
         char("="),
         maybe(inlineSpace),
         pattern,
-        repeat(attribute))
+        repeat(attribute),
+        lineEnd)
     .map(intoMessage);
 
-var anyCommentContent =
+var anyCommentLine =
     sequence(
         inlineSpace,
-        regex(/.*/))
-    .map(([space, content]) => content);
-
-var commentLine =
-    sequence(
-        char("#"),
-        maybe(anyCommentContent))
-    .map(([sigil,  content]) => content);
+        regex(/.*/),
+        lineEnd)
+    .map(([space, ...text]) => join(text));
 
 var comment =
-    sequence(
-        commentLine,
-        repeat(
-            sequence(
-                lineEnd,
-                commentLine)))
+    repeat1(
+        sequence(
+            char("#"),
+            maybe(anyCommentLine)))
     .map(intoComment);
 
-var anyComment =
-    either(
-        comment,
-        //groupComment,
-        //resourceComment
-    )
-
 var entry =
-    sequence(
+    either(
         either(
-            anyComment,
-            // term,
-            message),
-        lineEnd)
-    .map(seq => seq[0]);
+            comment),
+        message);
 
 var junk =
     repeat1(

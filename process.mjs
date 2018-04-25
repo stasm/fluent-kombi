@@ -19,8 +19,8 @@ export function intoAttribute(sequence) {
     return new FTL.Attribute(id, value);
 }
 
-export function intoComment([first, rest]) {
-    const content = join([first, ...rest.map(join)]);
+export function intoComment(lines) {
+    const content = join(lines.map(([sigil, text]) => text));
     return new FTL.Comment(content);
 }
 
