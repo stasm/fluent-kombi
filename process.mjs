@@ -23,3 +23,14 @@ export function intoComment([first, rest]) {
     const content = join([first, ...rest.map(join)]);
     return new FTL.Comment(content);
 }
+
+export function intoResource(body) {
+    // Filter blank lines out.
+    const entries = body.filter(entry => entry instanceof FTL.BaseNode);
+    return new FTL.Resource(entries);
+}
+
+export function intoJunk(lines) {
+    const content = join(lines.map(join));
+    return new FTL.Junk(content);
+}

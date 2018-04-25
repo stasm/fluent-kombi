@@ -5,14 +5,14 @@
  * Annotation.
  *
  */
-class BaseNode {
+export class BaseNode {
   constructor() {}
 }
 
 /*
  * Base class for AST nodes which can have Spans.
  */
-class SyntaxNode extends BaseNode {
+export class SyntaxNode extends BaseNode {
   addSpan(start, end) {
     this.span = new Span(start, end);
   }

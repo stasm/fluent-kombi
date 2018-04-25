@@ -2,8 +2,8 @@ import {
     and, char, either, eof, maybe, not, range, regex, repeat, repeat1,
     sequence, string, } from "./parsers.mjs";
 import {
-    intoAttribute, intoComment, intoIdentifier, intoMessage, join }
-    from "./process.mjs";
+    intoAttribute, intoComment, intoIdentifier, intoJunk, intoMessage,
+    intoResource, join } from "./process.mjs";
 
 var lineEnd =
     either(
@@ -110,10 +110,13 @@ var anyComment =
     )
 
 var entry =
-    either(
-        anyComment,
-        // term,
-        message);
+    sequence(
+        either(
+            anyComment,
+            // term,
+            message),
+        lineEnd)
+    .map(seq => seq[0]);
 
 var junk =
     repeat1(
@@ -122,25 +125,12 @@ var junk =
             sequence(
                 regex(/.*/),
                 lineEnd)))
-    .map(parsed => ({
-        type: "Junk",
-        content: join(parsed.map(join))
-    }));
+    .map(intoJunk);
 
 export default
-    sequence(
-        repeat(blankLine),
-        repeat(
-            either(
-                sequence(
-                    entry,
-                    lineEnd,
-                    repeat(blankLine)),
-                sequence(
-                    junk))))
-    .map(([_, entries, finalEntry]) => ({
-        type: "Resource",
-        body: finalEntry
-            ? [...entries.map(entrySeq => entrySeq[0]), finalEntry]
-            : entries.map(entrySeq => entrySeq[0]),
-    }));
+    repeat(
+        either(
+            blankLine,
+            entry,
+            junk))
+    .map(intoResource);
