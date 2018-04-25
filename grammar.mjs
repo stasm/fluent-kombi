@@ -73,7 +73,7 @@ var attribute =
         maybe(inlineSpace).hidden,
         char("=").hidden,
         maybe(inlineSpace).hidden,
-        pattern)
+        pattern).pruned
     .map(intoAttribute);
 
 var message =
@@ -84,7 +84,7 @@ var message =
         maybe(inlineSpace).hidden,
         pattern,
         repeat(attribute),
-        lineEnd.hidden)
+        lineEnd.hidden).pruned
     .map(intoMessage);
 
 var anyCommentLine =
@@ -98,7 +98,7 @@ var comment =
         sequence(
             char("#").hidden,
             maybe(anyCommentLine),
-            lineEnd))
+            lineEnd).pruned)
     .map(intoComment);
 
 var groupComment =
@@ -106,7 +106,7 @@ var groupComment =
         sequence(
             string("##").hidden,
             maybe(anyCommentLine),
-            lineEnd))
+            lineEnd).pruned)
     .map(intoGroupComment);
 
 var resourceComment =
@@ -114,7 +114,7 @@ var resourceComment =
         sequence(
             string("###").hidden,
             maybe(anyCommentLine),
-            lineEnd))
+            lineEnd).pruned)
     .map(intoResourceComment);
 
 var entry =
@@ -142,5 +142,5 @@ export default
         either(
             blankLine.hidden,
             entry,
-            junk))
+            junk)).pruned
     .map(intoResource);

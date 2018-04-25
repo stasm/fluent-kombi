@@ -26,6 +26,11 @@ export class Parser {
       return this.map(() => null);
   }
 
+  get pruned() {
+      // Filter out parsed results yielded by hidden parsers.
+      return this.map(list => list.filter(v => v !== null));
+  }
+
   bimap(s, f) {
     return new Parser(stream => this.run(stream).bimap(s, f));
   }
