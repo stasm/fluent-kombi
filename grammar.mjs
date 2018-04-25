@@ -1,16 +1,16 @@
 import {
-    and, char, either, maybe, not, range, regex, repeat, repeat1,
+    and, char, either, eof, maybe, not, range, regex, repeat, repeat1,
     sequence, string, } from "./parsers.mjs";
 import {
     intoAttribute, intoComment, intoIdentifier, intoMessage, join }
     from "./process.mjs";
 
-var lineBreak =
-    repeat1(
-        either(
-            char("\u000A"),
-            char("\u000D")))
-    .map(join);
+var lineEnd =
+    either(
+        string("\u000D\u000A"),
+        char("\u000A"),
+        char("\u000D"),
+        eof());
 
 var inlineSpace =
     repeat1(
@@ -22,12 +22,12 @@ var inlineSpace =
 var blankLine =
     sequence(
         maybe(inlineSpace),
-        lineBreak)
+        lineEnd)
     .map(join);
 
 var breakIndent =
     sequence(
-        lineBreak,
+        lineEnd,
         inlineSpace)
     .map(join);
 
@@ -98,7 +98,7 @@ var comment =
         commentLine,
         repeat(
             sequence(
-                lineBreak,
+                lineEnd,
                 commentLine)))
     .map(intoComment);
 
@@ -121,7 +121,7 @@ var junk =
             not(identifier),
             sequence(
                 regex(/.*/),
-                lineBreak)))
+                lineEnd)))
     .map(parsed => ({
         type: "Junk",
         content: join(parsed.map(join))
@@ -134,11 +134,10 @@ export default
             either(
                 sequence(
                     entry,
-                    lineBreak,
+                    lineEnd,
                     repeat(blankLine)),
                 sequence(
-                    junk))),
-        maybe(entry))
+                    junk))))
     .map(([_, entries, finalEntry]) => ({
         type: "Resource",
         body: finalEntry

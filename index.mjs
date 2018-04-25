@@ -11,10 +11,7 @@ foo=b
     .attr = c
 
 # Hello
-    .attr = c
-
-
-`;
+    .attr = c`;
 
 fluent.run(ftl).fold(pretty, console.error);
 

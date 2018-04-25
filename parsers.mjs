@@ -7,43 +7,39 @@ export class Parser {
   }
 
   run(iterable) {
-    if (iterable instanceof Stream) {
-      return this.parse(iterable);
-    } else {
-      return this.parse(new Stream(iterable));
-    }
+      const stream = iterable instanceof Stream
+          ? iterable
+          : new Stream(iterable);
+      try {
+          return this.parse(stream);
+      } catch(err) {
+          return new Failure(err.message, stream);
+      }
   }
 
   map(f) {
-    return new Parser(stream => this.parse(stream).map(f));
+    return new Parser(stream => this.run(stream).map(f));
   }
 
   bimap(s, f) {
-    return new Parser(stream => this.parse(stream).bimap(s, f));
+    return new Parser(stream => this.run(stream).bimap(s, f));
   }
 
   chain(f) {
-    return new Parser(stream => this.parse(stream).chain((v, s) => f(v).run(s)));
+    return new Parser(stream => this.run(stream).chain((v, s) => f(v).run(s)));
   }
 
   fold(s, f) {
-    return new Parser(stream => this.parse(stream).fold(s, f));
+    return new Parser(stream => this.run(stream).fold(s, f));
   }
 }
 
 export function where(pred) {
     return new Parser(stream => {
-        if (stream.length === 0) {
-            return new Failure('unexpected end', stream);
-        }
-
         const value = stream.head();
-
-        if (pred(value)) {
-            return new Success(value, stream.move(1));
-        }
-
-        return new Failure('predicate did not match', stream);
+        return pred(value)
+            ? new Success(value, stream.move(1))
+            : new Failure('predicate did not match', stream);
     });
 }
 
@@ -53,10 +49,6 @@ export function char(c) {
 
 export function regex(re) {
     return new Parser(stream => {
-        if (stream.length === 0) {
-            return new Failure('unexpected end', stream);
-        }
-
         const result = stream.exec(re);
 
         if (result === null) {
@@ -75,11 +67,8 @@ export function range(charset) {
 
 export function not(parser) {
     return new Parser(stream => parser.run(stream).fold(
-        (value, s) => new Failure('not failed', stream),
-        (value, s) =>
-            stream.length > 0
-                ? new Success(stream.head(), stream.move(1))
-                : new Failure('unexpected end', stream)));
+        (value, s) => new Failure("not failed", stream),
+        (value, s) => new Success(value, stream)));
 }
 
 export function and(...parsers) {
@@ -148,4 +137,11 @@ export function repeat1(parser) {
 
 export function string(str) {
     return sequence(...str.split('').map(char)).map(chars => chars.join(""));
+}
+
+export function eof() {
+    return new Parser(stream =>
+        stream.head() === Symbol.for("EOF")
+            ? new Success(stream.head(), stream.move(1))
+            : new Failure("not at EOF", stream));
 }

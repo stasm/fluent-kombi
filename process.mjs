@@ -1,7 +1,7 @@
 import * as FTL from "./ast.mjs";
 
 export function join(values) {
-    return values.join("");
+    return values.filter(v => v !== Symbol.for("EOF")).join("");
 }
 
 export function intoMessage(sequence) {

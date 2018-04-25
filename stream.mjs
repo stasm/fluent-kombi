@@ -9,13 +9,18 @@ export default class Stream {
 
     // Get the first value from the iterable.
     head() {
-        if (this.length <= 0) {
+        if (this.length < 0) {
             throw new TypeError('index out of range');
+        }
+
+        if (this.length == 0) {
+            return Symbol.for("EOF");
         }
 
         return this.iterable[this.cursor];
     }
 
+    // Execute a regex on the iterable.
     exec(re) {
         const sticky = new RegExp(re, "y");
         sticky.lastIndex = this.cursor;
@@ -29,20 +34,4 @@ export default class Stream {
             this.cursor + distance,
             this.length - distance);
     }
-
-    // Same interface as Array.slice but returns a new Stream
-    slice(start, stop) {
-        if (stop < start) {
-            throw new Error('stop < start');
-        }
-
-        if (stop && stop > this.length) {
-            throw new TypeError('index out of range');
-        }
-
-        return new Stream(
-            this.iterable,
-            this.cursor + start,
-            (stop || this.length) - start);
-    }
-}
+};
