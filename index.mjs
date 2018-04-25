@@ -7,12 +7,14 @@ var ftl = `
 #
 # There
 ą=Invalid identifier
-ź=Another one
+ć=Another one
 foo=b
     b
     .attr = c
 ### Resource Comment
 
+x Junk1
+y Junk2
 # Standalone
 
 # Another standalone

@@ -124,7 +124,10 @@ var entry =
 var junk =
     repeat1(
         and(
-            not(identifier),
+            not(message),
+            not(resourceComment),
+            not(groupComment),
+            not(comment),
             sequence(
                 regex(/.*/),
                 lineEnd)))
