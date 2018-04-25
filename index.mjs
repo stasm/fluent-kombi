@@ -1,16 +1,23 @@
 import util from "util";
 import fluent from "./grammar.mjs";
 
-const ftl = `
+var ftl = `
 
 # Hello
+#
 # There
-ą=ź
+ą=Invalid identifier
+ź=Another one
 foo=b
     b
     .attr = c
+### Resource Comment
 
-# Hello
+# Standalone
+
+# Another standalone
+## Group
+## Comment
     .attr = c`;
 
 fluent.run(ftl).fold(pretty, console.error);

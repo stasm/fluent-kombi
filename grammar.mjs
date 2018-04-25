@@ -2,8 +2,9 @@ import {
     and, char, either, eof, maybe, not, range, regex, repeat, repeat1,
     sequence, string, } from "./parsers.mjs";
 import {
-    intoAttribute, intoComment, intoIdentifier, intoJunk, intoMessage,
-    intoResource, join } from "./process.mjs";
+    intoAttribute, intoComment, intoGroupComment, intoIdentifier, intoJunk,
+    intoMessage, intoResource, intoResourceComment, join }
+    from "./process.mjs";
 
 var lineEnd =
     either(
@@ -85,20 +86,38 @@ var message =
 var anyCommentLine =
     sequence(
         inlineSpace,
-        regex(/.*/),
-        lineEnd)
-    .map(([space, ...text]) => join(text));
+        regex(/.*/))
+    .map(([space, text]) => text);
 
 var comment =
     repeat1(
         sequence(
             char("#"),
-            maybe(anyCommentLine)))
+            maybe(anyCommentLine),
+            lineEnd))
     .map(intoComment);
+
+var groupComment =
+    repeat1(
+        sequence(
+            string("##"),
+            maybe(anyCommentLine),
+            lineEnd))
+    .map(intoGroupComment);
+
+var resourceComment =
+    repeat1(
+        sequence(
+            string("###"),
+            maybe(anyCommentLine),
+            lineEnd))
+    .map(intoResourceComment);
 
 var entry =
     either(
         either(
+            resourceComment,
+            groupComment,
             comment),
         message);
 

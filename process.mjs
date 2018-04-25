@@ -20,8 +20,18 @@ export function intoAttribute(sequence) {
 }
 
 export function intoComment(lines) {
-    const content = join(lines.map(([sigil, text]) => text));
+    const content = join(lines.map(([sigil, ...text]) => join(text)));
     return new FTL.Comment(content);
+}
+
+export function intoGroupComment(lines) {
+    const content = join(lines.map(([sigil, ...text]) => join(text)));
+    return new FTL.GroupComment(content);
+}
+
+export function intoResourceComment(lines) {
+    const content = join(lines.map(([sigil, ...text]) => join(text)));
+    return new FTL.ResourceComment(content);
 }
 
 export function intoResource(body) {
