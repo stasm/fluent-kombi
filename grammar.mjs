@@ -3,7 +3,7 @@ import {
     sequence, string, } from "./parsers.mjs";
 import {
     intoAttribute, intoComment, intoGroupComment, intoIdentifier, intoJunk,
-    intoMessage, intoResource, intoResourceComment, join }
+    intoMessage, intoResource, intoResourceComment }
     from "./process.mjs";
 
 var lineEnd =
@@ -17,21 +17,18 @@ var inlineSpace =
     repeat1(
         either(
             char("\u0020"),
-            char("\u0009")))
-    .map(join);
+            char("\u0009"))).str;
 
 var blankLine =
     sequence(
         maybe(inlineSpace),
-        lineEnd)
-    .map(join);
+        lineEnd).str;
 
 var breakIndent =
     sequence(
         lineEnd,
-        repeat(blankLine).map(join),
-        inlineSpace)
-    .map(join);
+        repeat(blankLine).str,
+        inlineSpace).str;
 
 var otherChar =
     range("\u0021-\uD7FF\uE000-\uFFFD");
@@ -46,15 +43,13 @@ var indentedChar =
         breakIndent,
         and(
             not(char(".")),
-            inlineChar))
-    .map(join)
+            inlineChar)).str;
 
 var text =
     repeat1(
         either(
             inlineChar,
-            indentedChar))
-    .map(join);
+            indentedChar)).str;
 
 var pattern = text;
 
@@ -62,8 +57,7 @@ var identifier =
     sequence(
         range("a-zA-Z"),
         repeat(
-            range("a-zA-Z0-9_-")).map(join))
-    .map(join)
+            range("a-zA-Z0-9_-")).str).str
     .map(intoIdentifier);
 
 var attribute =
@@ -99,8 +93,7 @@ var comment =
         sequence(
             char("#").hidden,
             maybe(anyCommentLine),
-            lineEnd).pruned.map(join))
-    .map(join)
+            lineEnd).pruned.str).str
     .map(intoComment);
 
 var groupComment =
@@ -108,8 +101,7 @@ var groupComment =
         sequence(
             string("##").hidden,
             maybe(anyCommentLine),
-            lineEnd).pruned.map(join))
-    .map(join)
+            lineEnd).pruned.str).str
     .map(intoGroupComment);
 
 var resourceComment =
@@ -117,8 +109,7 @@ var resourceComment =
         sequence(
             string("###").hidden,
             maybe(anyCommentLine),
-            lineEnd).pruned.map(join))
-    .map(join)
+            lineEnd).pruned.str).str
     .map(intoResourceComment);
 
 var entry =
@@ -138,8 +129,7 @@ var junk =
             not(comment),
             sequence(
                 regex(/.*/),
-                lineEnd).map(join)))
-    .map(join)
+                lineEnd).str)).str
     .map(intoJunk);
 
 export default

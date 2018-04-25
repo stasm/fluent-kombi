@@ -1,11 +1,5 @@
 import * as FTL from "./ast.mjs";
 
-export function join(values) {
-    return values
-        .filter(v => v !== Symbol.for("EOF"))
-        .join("");
-}
-
 export function intoMessage([id, value, attributes]) {
     return new FTL.Message(id, value, attributes);
 }

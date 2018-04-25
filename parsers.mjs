@@ -17,18 +17,26 @@ export class Parser {
       }
   }
 
+    // Hidden parsers match and consume the input, and always yield null.
+    get hidden() {
+        return this.map(() => null);
+    }
+
+    // Filter out parsed results yielded by hidden parsers.
+    get pruned() {
+        return this.map(values => values.filter(v => v !== null));
+    }
+
+    // Join the list of parsed values into a string.
+    get str() {
+        return this.map(values =>
+            values
+                .filter(v => v !== Symbol.for("EOF"))
+                .join(""));
+    }
+
   map(f) {
     return new Parser(stream => this.run(stream).map(f));
-  }
-
-  // Hidden parsers match and consume the input, and always yield null.
-  get hidden() {
-      return this.map(() => null);
-  }
-
-  get pruned() {
-      // Filter out parsed results yielded by hidden parsers.
-      return this.map(list => list.filter(v => v !== null));
   }
 
   bimap(s, f) {
