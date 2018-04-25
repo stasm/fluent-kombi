@@ -8,7 +8,7 @@ var ftl = `
 # There
 ą=Invalid identifier
 ć=Another one
-foo=b
+foo=Value
     b
     .attr = c
 ### Resource Comment
@@ -21,6 +21,11 @@ y Junk2
 ## Group
 ## Comment
     .attr = c`;
+
+var ftl = `
+foo=Value
+    b
+    .yo = c`;
 
 fluent.run(ftl).fold(pretty, console.error);
 

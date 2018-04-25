@@ -32,23 +32,18 @@ var breakIndent =
         inlineSpace)
     .map(join);
 
-var identifier =
-    sequence(
-        range("a-zA-Z"),
-        repeat(
-            range("a-zA-Z0-9_-")))
-    .map(intoIdentifier);
+var otherChar =
+    range("\u0021-\uD7FF\uE000-\uFFFD");
 
 var inlineChar =
     either(
-        char(" "),
-        char("a"),
-        char("b"),
-        char("c"));
+        inlineSpace,
+        otherChar);
 
 var indentedChar = 
     sequence(
         breakIndent,
+        not(char(".")),
         inlineChar)
     .map(join)
 
@@ -61,11 +56,18 @@ var text =
 
 var pattern = text;
 
+var identifier =
+    sequence(
+        range("a-zA-Z"),
+        repeat(
+            range("a-zA-Z0-9_-")))
+    .map(intoIdentifier);
+
 var attribute =
     sequence(
         breakIndent,
         char("."),
-        string("attr"),
+        identifier,
         maybe(inlineSpace),
         char("="),
         maybe(inlineSpace),
