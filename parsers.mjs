@@ -68,7 +68,7 @@ export function range(charset) {
 export function not(parser) {
     return new Parser(stream => parser.run(stream).fold(
         (value, s) => new Failure("not failed", stream),
-        (value, s) => new Success(value, stream)));
+        (value, s) => new Success(null, stream)));
 }
 
 export function and(...parsers) {

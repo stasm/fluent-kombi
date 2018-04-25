@@ -29,6 +29,7 @@ var blankLine =
 var breakIndent =
     sequence(
         lineEnd,
+        repeat(blankLine).map(join),
         inlineSpace)
     .map(join);
 
@@ -43,8 +44,9 @@ var inlineChar =
 var indentedChar = 
     sequence(
         breakIndent,
-        not(char(".")),
-        inlineChar)
+        and(
+            not(char(".")),
+            inlineChar))
     .map(join)
 
 var text =

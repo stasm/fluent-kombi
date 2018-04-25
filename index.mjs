@@ -20,12 +20,14 @@ y Junk2
 # Another standalone
 ## Group
 ## Comment
-    .attr = c`;
+    .attr = c
 
-var ftl = `
-foo=Value
-    b
-    .yo = c`;
+key=Value
+
+    Continued
+    .title=
+
+        Title`;
 
 fluent.run(ftl).fold(pretty, console.error);
 
