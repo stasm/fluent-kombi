@@ -22,11 +22,6 @@ export class Parser {
         return this.map(() => null);
     }
 
-    // Filter out parsed results yielded by hidden parsers.
-    get pruned() {
-        return this.map(values => values.filter(v => v !== null));
-    }
-
     // Join the list of parsed values into a string.
     get str() {
         return this.map(values =>
@@ -129,13 +124,10 @@ export function append(p1, p2) {
     return p1.chain(vs => p2.map(v => vs.concat([v])));
 }
 
-export function concat(p1, p2) {
-    return p1.chain(xs => p2.map(ys => xs.concat(ys)));
-}
-
 export function sequence(...parsers) {
-    return parsers.reduce(
-        (acc, parser) => append(acc, parser), always([])).pruned;
+    const self = parsers.reduce(
+        (acc, parser) => append(acc, parser), always([]));
+    return pruneHidden(self);
 }
 
 export function maybe(parser) {
@@ -151,9 +143,10 @@ export function lookahead(parser) {
 }
 
 export function repeat(parser) {
-    return new Parser(stream => parser.run(stream).fold(
-            (value, s) => repeat(parser).map(rest => [value].concat(rest)).run(s),
-            (value, s) => new Success([], stream))).pruned;
+    const self = new Parser(stream => parser.run(stream).fold(
+        (value, s) => repeat(parser).map(rest => [value].concat(rest)).run(s),
+        (value, s) => new Success([], stream)));
+    return pruneHidden(self);
 }
 
 export function repeat1(parser) {
@@ -171,4 +164,10 @@ export function eof() {
         stream.head() === Symbol.for("EOF")
             ? new Success(stream.head(), stream.move(1))
             : new Failure("not at EOF", stream));
+}
+
+// Filter out parsed results yielded by hidden parsers.
+export function pruneHidden(parser) {
+    return parser.map(values =>
+        values.filter(v => v !== null));
 }
