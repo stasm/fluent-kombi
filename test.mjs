@@ -1,7 +1,9 @@
 import util from "util";
 import fluent from "./";
 
-var ftl = `
+const ftls = {
+    test: `
+
 
 # Hello
 #
@@ -29,9 +31,13 @@ key=Value
     Continued \\{
     .title=
 
-        Title`;
+        Title`,
+    expr: `
+foo = Foo {msg} {"abc"} {-term} Bar
+`
+};
 
-fluent.run(ftl).fold(pretty, console.error);
+fluent.run(ftls.expr).fold(pretty, console.error);
 
 function pretty(obj) {
     console.log(util.inspect(obj, {depth: null, colors: "auto"}));

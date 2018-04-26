@@ -31,8 +31,7 @@ var otherChar =
     char("\u0021-\uD7FF\uE000-\uFFFD");
 
 var backslash = char("\\");
-var openBrace = char("{");
-var doubleQuote = char("\"");
+var quote = char("\"");
 
 var inlineTextChar =
     either(
@@ -44,10 +43,10 @@ var inlineTextChar =
             backslash).str,
         sequence(
             backslash.hidden,
-            openBrace).str,
+            char("{")).str,
         and(
             not(backslash),
-            not(openBrace),
+            not(char("{")),
             otherChar));
 
 var indentedTextChar =
@@ -57,28 +56,27 @@ var indentedTextChar =
             not(char(".")),
             inlineTextChar)).str;
 
-var text =
+var TextElement =
     repeat1(
         either(
             inlineTextChar,
-            indentedTextChar)).str;
+            indentedTextChar)).str
+    .into(FTL.TextElement);
 
 var quotedTextChar =
     either(
         and(
-            not(doubleQuote),
+            not(quote),
             inlineTextChar),
         sequence(
             backslash.hidden,
-            doubleQuote).str);
+            quote).str);
 
 var quotedText =
     sequence(
-        doubleQuote.hidden,
-        repeat(quotedTextChar),
-        doubleQuote.hidden).str
-
-var Pattern = text;
+        quote.hidden,
+        repeat(quotedTextChar).str,
+        quote.hidden).str
 
 var identifier =
     sequence(
@@ -94,6 +92,29 @@ var TermIdentifier =
         char("-"),
         identifier).str
     .into(FTL.Identifier);
+
+var InlineExpression =
+    either(
+        quotedText.into(FTL.StringExpression),
+        Identifier.into(FTL.MessageReference),
+        TermIdentifier.into(FTL.MessageReference));
+
+var Placeable =
+    sequence(
+        char("{").hidden,
+        maybe(inlineSpace).hidden,
+        either(
+            InlineExpression),
+        maybe(inlineSpace).hidden,
+        char("}").hidden)
+    .spreadInto(FTL.Placeable);
+
+var Pattern =
+    repeat1(
+        either(
+            TextElement,
+            Placeable))
+    .into(FTL.Pattern);
 
 var Attribute =
     sequence(
