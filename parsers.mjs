@@ -79,6 +79,22 @@ export function string(str) {
     return regex(new RegExp(str));
 }
 
+export function eof() {
+    return new Parser(stream =>
+        stream.head() === Symbol.for("EOF")
+            ? new Success(stream.head(), stream.move(1))
+            : new Failure("not at EOF", stream));
+}
+
+export function lookahead(parser) {
+    return new Parser(stream =>
+        parser
+            .run(stream)
+            .fold(
+                value => new Success(value, stream),
+                value => new Failure(value, stream)));
+}
+
 export function not(parser) {
     return new Parser(stream =>
         parser
@@ -116,6 +132,15 @@ export function never(value) {
     return new Parser(stream => new Failure(value, stream));
 }
 
+export function maybe(parser) {
+    return new Parser(stream =>
+        parser
+            .run(stream)
+            .fold(
+                (value, tail) => new Success(value, tail),
+                (value, tail) => new Success(null, stream)));
+}
+
 export function append(p1, p2) {
     return p1.chain(values =>
         p2.map(value => values.concat([value])));
@@ -126,24 +151,6 @@ export function sequence(...parsers) {
         (acc, parser) => append(acc, parser),
         always([]));
     return pruneHidden(self);
-}
-
-export function maybe(parser) {
-    return new Parser(stream =>
-        parser
-            .run(stream)
-            .fold(
-                (value, tail) => new Success(value, tail),
-                (value, tail) => new Success(null, stream)));
-}
-
-export function lookahead(parser) {
-    return new Parser(stream =>
-        parser
-            .run(stream)
-            .fold(
-                value => new Success(value, stream),
-                value => new Failure(value, stream)));
 }
 
 export function repeat(parser) {
@@ -165,13 +172,6 @@ export function repeat1(parser) {
                     .map(rest => [value].concat(rest))
                     .run(tail),
             (value, tail) => new Failure("repeat1 failed", stream)));
-}
-
-export function eof() {
-    return new Parser(stream =>
-        stream.head() === Symbol.for("EOF")
-            ? new Success(stream.head(), stream.move(1))
-            : new Failure("not at EOF", stream));
 }
 
 // Filter out parsed results yielded by hidden parsers.
