@@ -11,6 +11,10 @@ var ftl = `
 foo=Value
     b
     .attr = c
+bar =
+    .placeholder = ąćęłńóśźż
+-brand-name = Aurora
+    .gender = feminine
 ### Resource Comment
 
 x Junk1

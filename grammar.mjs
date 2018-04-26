@@ -1,6 +1,6 @@
 import * as FTL from "./ast.mjs";
 import {
-    and, char, either, eof, maybe, not, regex, repeat, repeat1,
+    always, and, char, either, eof, maybe, not, regex, repeat, repeat1,
     sequence, string, } from "./parsers.mjs";
 
 var lineEnd =
@@ -50,11 +50,19 @@ var text =
 
 var pattern = text;
 
-var identifier =
+var identifierName =
     sequence(
         char("a-zA-Z"),
         repeat(
-            char("a-zA-Z0-9_-")).str).str
+            char("a-zA-Z0-9_-")).str).str;
+
+var identifier =
+    identifierName.into(FTL.Identifier);
+
+var termIdentifier =
+    sequence(
+        char("-"),
+        identifierName).str
     .into(FTL.Identifier);
 
 var attribute =
@@ -74,10 +82,28 @@ var message =
         maybe(inlineSpace).hidden,
         char("=").hidden,
         maybe(inlineSpace).hidden,
+        either(
+            sequence(
+                pattern,
+                repeat(attribute)),
+            sequence(
+                always(null),
+                repeat1(attribute))),
+        lineEnd.hidden)
+    .map(list => list.reduce( // flatten()
+        (acc, cur) => acc.concat(cur), []))
+    .spreadInto(FTL.Message);
+
+var term =
+    sequence(
+        termIdentifier,
+        maybe(inlineSpace).hidden,
+        char("=").hidden,
+        maybe(inlineSpace).hidden,
         pattern,
         repeat(attribute),
         lineEnd.hidden)
-    .spreadInto(FTL.Message);
+    .spreadInto(FTL.Term);
 
 var anyCommentLine =
     sequence(
@@ -115,7 +141,8 @@ var entry =
             resourceComment,
             groupComment,
             comment),
-        message);
+        message,
+        term);
 
 var junk =
     repeat1(
