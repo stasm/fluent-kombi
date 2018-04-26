@@ -1,6 +1,6 @@
 import * as FTL from "./ast.mjs";
 import {
-    and, char, either, eof, maybe, not, range, regex, repeat, repeat1,
+    and, char, either, eof, maybe, not, regex, repeat, repeat1,
     sequence, string, } from "./parsers.mjs";
 
 var lineEnd =
@@ -28,7 +28,7 @@ var breakIndent =
         inlineSpace).str;
 
 var otherChar =
-    range("\u0021-\uD7FF\uE000-\uFFFD");
+    char("\u0021-\uD7FF\uE000-\uFFFD");
 
 var inlineChar =
     either(
@@ -52,9 +52,9 @@ var pattern = text;
 
 var identifier =
     sequence(
-        range("a-zA-Z"),
+        char("a-zA-Z"),
         repeat(
-            range("a-zA-Z0-9_-")).str).str
+            char("a-zA-Z0-9_-")).str).str
     .into(FTL.Identifier);
 
 var attribute =

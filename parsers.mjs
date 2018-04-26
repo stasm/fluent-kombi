@@ -57,19 +57,6 @@ export class Parser {
     }
 }
 
-export function where(pred) {
-    return new Parser(stream => {
-        const value = stream.head();
-        return pred(value)
-            ? new Success(value, stream.move(1))
-            : new Failure("predicate did not match", stream);
-    });
-}
-
-export function char(c) {
-    return where(x => x === c);
-}
-
 export function regex(re) {
     return new Parser(stream => {
         const result = stream.exec(re);
@@ -84,8 +71,12 @@ export function regex(re) {
     });
 }
 
-export function range(charset) {
-    return regex(new RegExp(`[${charset}]`));
+export function char(range) {
+    return regex(new RegExp(`[${range}]`));
+}
+
+export function string(str) {
+    return regex(new RegExp(str));
 }
 
 export function not(parser) {
@@ -174,10 +165,6 @@ export function repeat1(parser) {
                     .map(rest => [value].concat(rest))
                     .run(tail),
             (value, tail) => new Failure("repeat1 failed", stream)));
-}
-
-export function string(str) {
-    return sequence(...str.split("").map(char)).str;
 }
 
 export function eof() {
