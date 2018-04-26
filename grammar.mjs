@@ -1,7 +1,7 @@
 import * as FTL from "./ast.mjs";
 import {
-    always, and, char, either, eof, maybe, not, regex, repeat, repeat1,
-    sequence, string, } from "./parsers.mjs";
+    always, and, char, either, eof, lookahead, maybe, not, regex, repeat,
+    repeat1, sequence, string, } from "./parsers.mjs";
 
 var lineEnd =
     either(
@@ -33,7 +33,7 @@ var otherChar =
 var backslash = char("\\");
 var quote = char("\"");
 
-var inlineTextChar =
+var textChar =
     either(
         inlineSpace,
         // XXX unescape?
@@ -49,25 +49,26 @@ var inlineTextChar =
             not(char("{")),
             otherChar));
 
-var indentedTextChar =
+var textCont =
     sequence(
         breakIndent,
-        and(
-            not(char(".")),
-            inlineTextChar)).str;
+        lookahead(not(char("."))),
+        lookahead(not(char("*"))),
+        lookahead(not(char("["))),
+        lookahead(not(char("}")))).hidden;
 
 var TextElement =
     repeat1(
         either(
-            inlineTextChar,
-            indentedTextChar)).str
+            textChar,
+            textCont)).str
     .into(FTL.TextElement);
 
 var quotedTextChar =
     either(
         and(
             not(quote),
-            inlineTextChar),
+            textChar),
         sequence(
             backslash.hidden,
             quote).str);

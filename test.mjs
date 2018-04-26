@@ -34,6 +34,7 @@ key=Value
         Title`,
     expr: `
 foo = Foo {msg} {"abc"} {-term} Bar
+    {"continued"}
 `
 };
 
