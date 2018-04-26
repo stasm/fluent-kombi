@@ -60,6 +60,13 @@ export class Parser {
     }
 }
 
+export function char(c) {
+    return new Parser(stream =>
+        stream.head() === c
+            ? new Success(c, stream.move(1))
+            : new Failure(`${c} not found`, stream));
+}
+
 export function regex(re) {
     return new Parser(stream => {
         const result = stream.exec(re);
@@ -74,14 +81,12 @@ export function regex(re) {
     });
 }
 
-export function char(range) {
-    // Escape backslashes for the regex contructor.
-    const escaped = range.replace("\\", "\\\\");
-    return regex(new RegExp(`[${escaped}]`));
+export function charset(range) {
+    return regex(new RegExp(`[${range}]`));
 }
 
 export function string(str) {
-    return regex(new RegExp(str));
+    return sequence(...str.split("").map(char)).str;
 }
 
 export function eof() {

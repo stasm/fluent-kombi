@@ -37,7 +37,7 @@ foo = Foo {msg} {"abc"} {-term} Bar
     {$ext}
 `,
     selexpr: `
-new-messages = { $num -> }
+new-messages = { $num ->
         [one] One
         [other] Other
     }
