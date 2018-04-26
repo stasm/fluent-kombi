@@ -1,39 +1,39 @@
 import * as FTL from "./ast.mjs";
 import {
-    always, and, char, either, eof, maybe, not, regex, repeat, repeat1,
-    sequence, string, } from "./parsers.mjs";
+    always, and, char, charset, either, eof, lazy, maybe, not, regex, repeat,
+    repeat1, sequence, string, } from "./parsers.mjs";
 
-var lineEnd =
+const lineEnd =
     either(
         string("\u000D\u000A"),
         char("\u000A"),
         char("\u000D"),
         eof());
 
-var inlineSpace =
+const inlineSpace =
     repeat1(
         either(
             char("\u0020"),
             char("\u0009"))).str;
 
-var blankLine =
+const blankLine =
     sequence(
         maybe(inlineSpace),
         lineEnd).str;
 
-var breakIndent =
+const breakIndent =
     sequence(
         lineEnd,
         repeat(blankLine).str,
         inlineSpace).str;
 
-var otherChar =
-    char("\u0021-\uD7FF\uE000-\uFFFD");
+const otherChar =
+    charset("\u0021-\uD7FF\uE000-\uFFFD");
 
-var backslash = char("\\");
-var quote = char("\"");
+const backslash = char("\\");
+const quote = char("\"");
 
-var textChar =
+const textChar =
     either(
         inlineSpace,
         // XXX unescape?
@@ -49,7 +49,7 @@ var textChar =
             not(char("{")),
             otherChar));
 
-var textCont =
+const textCont =
     sequence(
         breakIndent,
         and(
@@ -58,14 +58,14 @@ var textCont =
             not(char("[")),
             not(char("}")))).str;
 
-var TextElement =
+const TextElement =
     repeat1(
         either(
             textChar,
             textCont)).str
     .into(FTL.TextElement);
 
-var quotedTextChar =
+const quotedTextChar =
     either(
         and(
             not(quote),
@@ -74,70 +74,72 @@ var quotedTextChar =
             backslash.hidden,
             quote).str);
 
-var quotedText =
+const quotedText =
     sequence(
         quote.hidden,
         repeat(quotedTextChar).str,
         quote.hidden).str
 
-var identifier =
+const identifier =
     sequence(
-        char("a-zA-Z"),
+        charset("a-zA-Z"),
         repeat(
-            char("a-zA-Z0-9_-")).str).str;
+            charset("a-zA-Z0-9_-")).str).str;
 
-var Identifier =
+const Identifier =
     identifier.into(FTL.Identifier);
 
-var TermIdentifier =
+const TermIdentifier =
     sequence(
         char("-"),
         identifier).str
     .into(FTL.Identifier);
 
-var ExternalIdentifier =
+const ExternalIdentifier =
     sequence(
         char("$").hidden,
         identifier).str
     .into(FTL.Identifier);
 
-var InlineExpression =
+const InlineExpression =
     either(
         quotedText.into(FTL.StringExpression),
         Identifier.into(FTL.MessageReference),
         TermIdentifier.into(FTL.MessageReference),
         ExternalIdentifier.into(FTL.ExternalArgument));
 
-var Variant =
+const Variant =
     sequence(
         breakIndent.hidden,
         char("[").hidden,
         maybe(inlineSpace).hidden,
         repeat1(
-            char("a-z")),
+            charset("a-z")).str,
         maybe(inlineSpace).hidden,
         char("]").hidden,
-        Pattern)
+        maybe(inlineSpace).hidden,
+        lazy(() => Pattern))
     .spreadInto(FTL.Variant);
 
 // XXX Require one default variant.
-var variantList =
+const variantList =
     repeat1(
         Variant);
 
-var SelectExpression =
+const SelectExpression =
     sequence(
         InlineExpression,
         maybe(inlineSpace).hidden,
         string("->").hidden,
         maybe(inlineSpace).hidden,
-        variantList)
+        variantList,
+        breakIndent.hidden)
     .spreadInto(FTL.SelectExpression);
 
-var BlockExpression =
+const BlockExpression =
     SelectExpression;
 
-var Placeable =
+const Placeable =
     sequence(
         char("{").hidden,
         maybe(inlineSpace).hidden,
@@ -149,14 +151,14 @@ var Placeable =
         char("}").hidden)
     .spreadInto(FTL.Placeable);
 
-var Pattern =
+const Pattern =
     repeat1(
         either(
             TextElement,
             Placeable))
     .into(FTL.Pattern);
 
-var Attribute =
+const Attribute =
     sequence(
         breakIndent.hidden,
         char(".").hidden,
@@ -167,7 +169,7 @@ var Attribute =
         Pattern)
     .spreadInto(FTL.Attribute);
 
-var messageWithValue =
+const messageWithValue =
     sequence(
         Identifier,
         maybe(inlineSpace).hidden,
@@ -177,7 +179,7 @@ var messageWithValue =
         repeat(Attribute),
         lineEnd.hidden)
 
-var messageWithoutValue =
+const messageWithoutValue =
     sequence(
         Identifier,
         maybe(inlineSpace).hidden,
@@ -187,13 +189,13 @@ var messageWithoutValue =
         repeat1(Attribute),
         lineEnd.hidden)
 
-var Message =
+const Message =
     either(
         messageWithValue,
         messageWithoutValue)
     .spreadInto(FTL.Message);
 
-var Term =
+const Term =
     sequence(
         TermIdentifier,
         maybe(inlineSpace).hidden,
@@ -204,13 +206,13 @@ var Term =
         lineEnd.hidden)
     .spreadInto(FTL.Term);
 
-var commentLine =
+const commentLine =
     sequence(
         inlineSpace,
         regex(/.*/))
     .map(([space, text]) => text);
 
-var Comment =
+const Comment =
     repeat1(
         sequence(
             char("#").hidden,
@@ -218,7 +220,7 @@ var Comment =
             lineEnd).str).str
     .into(FTL.Comment);
 
-var GroupComment =
+const GroupComment =
     repeat1(
         sequence(
             string("##").hidden,
@@ -226,7 +228,7 @@ var GroupComment =
             lineEnd).str).str
     .into(FTL.GroupComment);
 
-var ResourceComment =
+const ResourceComment =
     repeat1(
         sequence(
             string("###").hidden,
@@ -234,7 +236,7 @@ var ResourceComment =
             lineEnd).str).str
     .into(FTL.ResourceComment);
 
-var Entry =
+const Entry =
     either(
         either(
             ResourceComment,
@@ -243,7 +245,7 @@ var Entry =
         Message,
         Term);
 
-var Junk =
+const Junk =
     repeat1(
         and(
             not(Message),
