@@ -1,7 +1,7 @@
 import * as FTL from "./ast.mjs";
 import {
-    always, and, char, either, eof, lookahead, maybe, not, regex, repeat,
-    repeat1, sequence, string, } from "./parsers.mjs";
+    always, and, char, either, eof, maybe, not, regex, repeat, repeat1,
+    sequence, string, } from "./parsers.mjs";
 
 var lineEnd =
     either(
@@ -52,10 +52,11 @@ var textChar =
 var textCont =
     sequence(
         breakIndent,
-        lookahead(not(char("."))),
-        lookahead(not(char("*"))),
-        lookahead(not(char("["))),
-        lookahead(not(char("}")))).hidden;
+        and(
+            not(char(".")),
+            not(char("*")),
+            not(char("[")),
+            not(char("}")))).str;
 
 var TextElement =
     repeat1(
