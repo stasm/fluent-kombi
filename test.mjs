@@ -22,10 +22,11 @@ y Junk2
 ## Group
 ## Comment
     .attr = c
+foo = Foo
 
 key=Value
 
-    Continued
+    Continued \\{
     .title=
 
         Title`;

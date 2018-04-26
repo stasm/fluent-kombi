@@ -30,23 +30,53 @@ var breakIndent =
 var otherChar =
     char("\u0021-\uD7FF\uE000-\uFFFD");
 
-var inlineChar =
+var backslash = char("\\");
+var openBrace = char("{");
+var doubleQuote = char("\"");
+
+var inlineTextChar =
     either(
         inlineSpace,
-        otherChar);
+        // XXX unescape?
+        // regex(/\\u[0-9a-fA-F]{4}/),
+        sequence(
+            backslash.hidden,
+            backslash).str,
+        sequence(
+            backslash.hidden,
+            openBrace).str,
+        and(
+            not(backslash),
+            not(openBrace),
+            otherChar));
 
-var indentedChar = 
+var indentedTextChar =
     sequence(
         breakIndent,
         and(
             not(char(".")),
-            inlineChar)).str;
+            inlineTextChar)).str;
 
 var text =
     repeat1(
         either(
-            inlineChar,
-            indentedChar)).str;
+            inlineTextChar,
+            indentedTextChar)).str;
+
+var quotedTextChar =
+    either(
+        and(
+            not(doubleQuote),
+            inlineTextChar),
+        sequence(
+            backslash.hidden,
+            doubleQuote).str);
+
+var quotedText =
+    sequence(
+        doubleQuote.hidden,
+        repeat(quotedTextChar),
+        doubleQuote.hidden).str
 
 var Pattern = text;
 

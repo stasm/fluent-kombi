@@ -75,7 +75,9 @@ export function regex(re) {
 }
 
 export function char(range) {
-    return regex(new RegExp(`[${range}]`));
+    // Escape backslashes for the regex contructor.
+    const escaped = range.replace("\\", "\\\\");
+    return regex(new RegExp(`[${escaped}]`));
 }
 
 export function string(str) {
