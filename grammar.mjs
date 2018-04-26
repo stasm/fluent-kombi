@@ -108,11 +108,42 @@ var InlineExpression =
         TermIdentifier.into(FTL.MessageReference),
         ExternalIdentifier.into(FTL.ExternalArgument));
 
+var Variant =
+    sequence(
+        breakIndent.hidden,
+        char("[").hidden,
+        maybe(inlineSpace).hidden,
+        repeat1(
+            char("a-z")),
+        maybe(inlineSpace).hidden,
+        char("]").hidden,
+        Pattern)
+    .spreadInto(FTL.Variant);
+
+// XXX Require one default variant.
+var variantList =
+    repeat1(
+        Variant);
+
+var SelectExpression =
+    sequence(
+        InlineExpression,
+        maybe(inlineSpace).hidden,
+        string("->").hidden,
+        maybe(inlineSpace).hidden,
+        variantList)
+    .spreadInto(FTL.SelectExpression);
+
+var BlockExpression =
+    SelectExpression;
+
 var Placeable =
     sequence(
         char("{").hidden,
         maybe(inlineSpace).hidden,
         either(
+            // Order matters!
+            BlockExpression,
             InlineExpression),
         maybe(inlineSpace).hidden,
         char("}").hidden)

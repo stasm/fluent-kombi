@@ -35,10 +35,16 @@ key=Value
     expr: `
 foo = Foo {msg} {"abc"} {-term} Bar
     {$ext}
+`,
+    selexpr: `
+new-messages = { $num -> }
+        [one] One
+        [other] Other
+    }
 `
 };
 
-fluent.run(ftls.expr).fold(pretty, console.error);
+fluent.run(ftls.selexpr).fold(pretty, console.error);
 
 function pretty(obj) {
     console.log(util.inspect(obj, {depth: null, colors: "auto"}));
