@@ -95,11 +95,18 @@ var TermIdentifier =
         identifier).str
     .into(FTL.Identifier);
 
+var ExternalIdentifier =
+    sequence(
+        char("$").hidden,
+        identifier).str
+    .into(FTL.Identifier);
+
 var InlineExpression =
     either(
         quotedText.into(FTL.StringExpression),
         Identifier.into(FTL.MessageReference),
-        TermIdentifier.into(FTL.MessageReference));
+        TermIdentifier.into(FTL.MessageReference),
+        ExternalIdentifier.into(FTL.ExternalArgument));
 
 var Placeable =
     sequence(
