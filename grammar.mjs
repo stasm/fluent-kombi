@@ -48,117 +48,117 @@ var text =
             inlineChar,
             indentedChar)).str;
 
-var pattern = text;
+var Pattern = text;
 
-var identifierName =
+var identifier =
     sequence(
         char("a-zA-Z"),
         repeat(
             char("a-zA-Z0-9_-")).str).str;
 
-var identifier =
-    identifierName.into(FTL.Identifier);
+var Identifier =
+    identifier.into(FTL.Identifier);
 
-var termIdentifier =
+var TermIdentifier =
     sequence(
         char("-"),
-        identifierName).str
+        identifier).str
     .into(FTL.Identifier);
 
-var attribute =
+var Attribute =
     sequence(
         breakIndent.hidden,
         char(".").hidden,
-        identifier,
+        Identifier,
         maybe(inlineSpace).hidden,
         char("=").hidden,
         maybe(inlineSpace).hidden,
-        pattern)
+        Pattern)
     .spreadInto(FTL.Attribute);
 
 var messageWithValue =
     sequence(
-        identifier,
+        Identifier,
         maybe(inlineSpace).hidden,
         char("=").hidden,
         maybe(inlineSpace).hidden,
-        pattern,
-        repeat(attribute),
+        Pattern,
+        repeat(Attribute),
         lineEnd.hidden)
 
 var messageWithoutValue =
     sequence(
-        identifier,
+        Identifier,
         maybe(inlineSpace).hidden,
         char("=").hidden,
         maybe(inlineSpace).hidden,
         always(null),
-        repeat1(attribute),
+        repeat1(Attribute),
         lineEnd.hidden)
 
-var message =
+var Message =
     either(
         messageWithValue,
         messageWithoutValue)
     .spreadInto(FTL.Message);
 
-var term =
+var Term =
     sequence(
-        termIdentifier,
+        TermIdentifier,
         maybe(inlineSpace).hidden,
         char("=").hidden,
         maybe(inlineSpace).hidden,
-        pattern,
-        repeat(attribute),
+        Pattern,
+        repeat(Attribute),
         lineEnd.hidden)
     .spreadInto(FTL.Term);
 
-var anyCommentLine =
+var commentLine =
     sequence(
         inlineSpace,
         regex(/.*/))
     .map(([space, text]) => text);
 
-var comment =
+var Comment =
     repeat1(
         sequence(
             char("#").hidden,
-            maybe(anyCommentLine),
+            maybe(commentLine),
             lineEnd).str).str
     .into(FTL.Comment);
 
-var groupComment =
+var GroupComment =
     repeat1(
         sequence(
             string("##").hidden,
-            maybe(anyCommentLine),
+            maybe(commentLine),
             lineEnd).str).str
     .into(FTL.GroupComment);
 
-var resourceComment =
+var ResourceComment =
     repeat1(
         sequence(
             string("###").hidden,
-            maybe(anyCommentLine),
+            maybe(commentLine),
             lineEnd).str).str
     .into(FTL.ResourceComment);
 
-var entry =
+var Entry =
     either(
         either(
-            resourceComment,
-            groupComment,
-            comment),
-        message,
-        term);
+            ResourceComment,
+            GroupComment,
+            Comment),
+        Message,
+        Term);
 
-var junk =
+var Junk =
     repeat1(
         and(
-            not(message),
-            not(resourceComment),
-            not(groupComment),
-            not(comment),
+            not(Message),
+            not(ResourceComment),
+            not(GroupComment),
+            not(Comment),
             sequence(
                 regex(/.*/),
                 lineEnd).str)).str
@@ -168,7 +168,7 @@ export default
     repeat(
         either(
             blankLine.hidden,
-            entry,
-            junk))
+            Entry,
+            Junk))
     .spreadInto(Array)
     .into(FTL.Resource);
