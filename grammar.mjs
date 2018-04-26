@@ -76,22 +76,30 @@ var attribute =
         pattern)
     .spreadInto(FTL.Attribute);
 
-var message =
+var messageWithValue =
     sequence(
         identifier,
         maybe(inlineSpace).hidden,
         char("=").hidden,
         maybe(inlineSpace).hidden,
-        either(
-            sequence(
-                pattern,
-                repeat(attribute)),
-            sequence(
-                always(null),
-                repeat1(attribute))),
+        pattern,
+        repeat(attribute),
         lineEnd.hidden)
-    .map(list => list.reduce( // flatten()
-        (acc, cur) => acc.concat(cur), []))
+
+var messageWithoutValue =
+    sequence(
+        identifier,
+        maybe(inlineSpace).hidden,
+        char("=").hidden,
+        maybe(inlineSpace).hidden,
+        always(null),
+        repeat1(attribute),
+        lineEnd.hidden)
+
+var message =
+    either(
+        messageWithValue,
+        messageWithoutValue)
     .spreadInto(FTL.Message);
 
 var term =

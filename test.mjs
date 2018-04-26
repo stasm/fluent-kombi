@@ -8,9 +8,6 @@ var ftl = `
 # There
 ą=Invalid identifier
 ć=Another one
-foo=Value
-    b
-    .attr = c
 bar =
     .placeholder = ąćęłńóśźż
 -brand-name = Aurora
