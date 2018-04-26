@@ -32,6 +32,5 @@ key=Value
 fluent.run(ftl).fold(pretty, console.error);
 
 function pretty(obj) {
-    console.log(
-        util.inspect(obj, {depth: null, colors: "auto"}));
+    console.log(util.inspect(obj, {depth: null, colors: "auto"}));
 }

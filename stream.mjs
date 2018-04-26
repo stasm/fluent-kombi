@@ -10,7 +10,7 @@ export default class Stream {
     // Get the first value from the iterable.
     head() {
         if (this.length < 0) {
-            throw new TypeError('index out of range');
+            throw new TypeError("index out of range");
         }
 
         if (this.length == 0) {
@@ -34,4 +34,4 @@ export default class Stream {
             this.cursor + distance,
             this.length - distance);
     }
-};
+}
