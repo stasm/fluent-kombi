@@ -135,4 +135,5 @@ export default
             blankLine.hidden,
             entry,
             junk))
+    .spreadInto(Array)
     .into(FTL.Resource);

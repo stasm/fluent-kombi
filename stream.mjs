@@ -14,7 +14,7 @@ export default class Stream {
         }
 
         if (this.length == 0) {
-            return Symbol.for("EOF");
+            return Symbol.for("eof");
         }
 
         return this.iterable[this.cursor];

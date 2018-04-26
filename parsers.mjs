@@ -19,14 +19,14 @@ export class Parser {
 
     // Hidden parsers match and consume the input, and always yield null.
     get hidden() {
-        return this.map(() => null);
+        return this.map(() => Symbol.for("hidden"));
     }
 
     // Join the list of parsed values into a string.
     get str() {
         return this.map(values =>
             values
-                .filter(value => value !== Symbol.for("EOF"))
+                .filter(value => typeof value !== "symbol")
                 .join(""));
     }
 
@@ -35,7 +35,10 @@ export class Parser {
     }
 
     spreadInto(ctor) {
-        return this.map(values => new ctor(...values));
+        // Filter out parsed results yielded by hidden parsers.
+        const pruneHidden = value => value !== Symbol.for("hidden");
+        return this.map(values =>
+            new ctor(...values.filter(pruneHidden)));
     }
 
     map(f) {
@@ -81,7 +84,7 @@ export function string(str) {
 
 export function eof() {
     return new Parser(stream =>
-        stream.head() === Symbol.for("EOF")
+        stream.head() === Symbol.for("eof")
             ? new Success(stream.head(), stream.move(1))
             : new Failure("not at EOF", stream));
 }
@@ -147,21 +150,19 @@ export function append(p1, p2) {
 }
 
 export function sequence(...parsers) {
-    const self = parsers.reduce(
+    return parsers.reduce(
         (acc, parser) => append(acc, parser),
         always([]));
-    return pruneHidden(self);
 }
 
 export function repeat(parser) {
-    const self = new Parser(stream =>
+    return new Parser(stream =>
         parser.run(stream).fold(
             (value, tail) =>
                 repeat(parser)
                     .map(rest => [value].concat(rest))
                     .run(tail),
             (value, tail) => new Success([], stream)));
-    return pruneHidden(self);
 }
 
 export function repeat1(parser) {
@@ -172,10 +173,4 @@ export function repeat1(parser) {
                     .map(rest => [value].concat(rest))
                     .run(tail),
             (value, tail) => new Failure("repeat1 failed", stream)));
-}
-
-// Filter out parsed results yielded by hidden parsers.
-export function pruneHidden(parser) {
-    return parser.map(values =>
-        values.filter(v => v !== null));
 }
