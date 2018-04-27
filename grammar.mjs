@@ -277,7 +277,7 @@ const Term =
 
 const commentLine =
     sequence(
-        inlineSpace,
+        char(" "),
         regex(/.*/))
     .map(([space, text]) => text);
 
