@@ -3,6 +3,12 @@ import {
     always, and, char, charset, either, eof, lazy, maybe, not, regex, repeat,
     repeat1, sequence, string, } from "./parsers.mjs";
 
+// Mapping helpers
+const assign = extra =>
+    obj => Object.assign(obj, extra);
+const flatten = list =>
+    list.reduce((acc, cur) => acc.concat(cur), []);
+
 const lineEnd =
     either(
         string("\u000D\u000A"),
@@ -113,18 +119,33 @@ const Variant =
         breakIndent.hidden,
         char("[").hidden,
         maybe(inlineSpace).hidden,
-        repeat1(
-            charset("a-z")).str,
+        repeat1(charset("a-z")).str,
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,
         lazy(() => Pattern))
     .spreadInto(FTL.Variant);
 
-// XXX Require one default variant.
+const DefaultVariant =
+    sequence(
+        breakIndent.hidden,
+        char("*").hidden,
+        char("[").hidden,
+        maybe(inlineSpace).hidden,
+        repeat1(charset("a-z")).str,
+        maybe(inlineSpace).hidden,
+        char("]").hidden,
+        maybe(inlineSpace).hidden,
+        lazy(() => Pattern))
+    .spreadInto(FTL.Variant)
+    .map(assign({default: true}));
+
 const variantList =
-    repeat1(
-        Variant);
+    sequence(
+        repeat(Variant),
+        DefaultVariant,
+        repeat(Variant))
+    .map(flatten);
 
 const SelectExpression =
     sequence(

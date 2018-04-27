@@ -39,7 +39,7 @@ foo = Foo {msg} {"abc"} {-term} Bar
     selexpr: `
 new-messages = { $num ->
         [one] One
-        [other] Other
+       *[other] Other
     }
 `
 };
