@@ -4,7 +4,7 @@
   "description": "Fluent Parser Combinator",
   "main": "index.mjs",
   "scripts": {
-    "bench": "node --experimental-modules bench.mjs",
+    "bench": "node --experimental-modules --harmony-async-iteration bench.mjs",
     "test": "node --experimental-modules test.mjs"
   },
   "repository": {
@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/stasm/fluent-kombi/issues"
   },
-  "homepage": "https://github.com/stasm/fluent-kombi#readme"
+  "homepage": "https://github.com/stasm/fluent-kombi#readme",
+  "devDependencies": {
+    "fluent": "^0.6.4",
+    "fluent-syntax": "^0.7.0"
+  }
 }
