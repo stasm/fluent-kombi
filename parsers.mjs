@@ -155,6 +155,11 @@ export function append(p1, p2) {
         unwrap(p2).map(value => values.concat([value])));
 }
 
+export function between(padding, parser) {
+    return sequence(padding, parser, padding)
+        .map(([left, value, right]) => value);
+}
+
 export function sequence(...parsers) {
     return parsers.reduce(
         (acc, parser) => append(acc, parser),

@@ -1,6 +1,6 @@
 import * as FTL from "./ast.mjs";
 import {
-    always, and, char, charset, either, eof, maybe, not, regex,
+    always, and, between, char, charset, either, eof, maybe, not, regex,
     repeat, repeat1, sequence, string } from "./parsers.mjs";
 import {assign, join, flatten, print} from "./util.mjs";
 
@@ -95,11 +95,9 @@ const quotedTextChar =
             quote).map(join));
 
 const quotedText =
-    sequence(
-        quote.hidden,
-        repeat(quotedTextChar),
-        quote.hidden)
-    .map(flatten(1))
+    between(
+        quote,
+        repeat(quotedTextChar))
     .map(join)
 
 const identifier =
@@ -177,9 +175,9 @@ const Variant = () =>
     sequence(
         breakIndent.hidden,
         char("[").hidden,
-        maybe(inlineSpace).hidden,
-        VariantKey,
-        maybe(inlineSpace).hidden,
+        between(
+            maybe(inlineSpace),
+            VariantKey),
         char("]").hidden,
         maybe(inlineSpace).hidden,
         Pattern)
@@ -190,9 +188,9 @@ const DefaultVariant = () =>
         breakIndent.hidden,
         char("*").hidden,
         char("[").hidden,
-        maybe(inlineSpace).hidden,
-        VariantKey,
-        maybe(inlineSpace).hidden,
+        between(
+            maybe(inlineSpace),
+            VariantKey),
         char("]").hidden,
         maybe(inlineSpace).hidden,
         Pattern)
@@ -209,9 +207,9 @@ const variantList =
 const SelectExpression =
     sequence(
         InlineExpression,
-        maybe(inlineSpace).hidden,
-        string("->").hidden,
-        maybe(inlineSpace).hidden,
+        between(
+            maybe(inlineSpace),
+            string("->").hidden),
         variantList,
         breakIndent.hidden)
     .spreadInto(FTL.SelectExpression);
@@ -222,12 +220,12 @@ const BlockExpression =
 const Placeable =
     sequence(
         char("{").hidden,
-        maybe(inlineSpace).hidden,
-        either(
-            // Order matters!
-            BlockExpression,
-            InlineExpression),
-        maybe(inlineSpace).hidden,
+        between(
+            maybe(inlineSpace),
+            either(
+                // Order matters!
+                BlockExpression,
+                InlineExpression)),
         char("}").hidden)
     .spreadInto(FTL.Placeable);
 
@@ -243,18 +241,18 @@ const Attribute =
         breakIndent.hidden,
         char(".").hidden,
         Identifier,
-        maybe(inlineSpace).hidden,
-        char("=").hidden,
-        maybe(inlineSpace).hidden,
+        between(
+            maybe(inlineSpace),
+            char("=").hidden),
         Pattern)
     .spreadInto(FTL.Attribute);
 
 const Message =
     sequence(
         Identifier,
-        maybe(inlineSpace).hidden,
-        char("=").hidden,
-        maybe(inlineSpace).hidden,
+        between(
+            maybe(inlineSpace),
+            char("=").hidden),
         either(
             sequence(
                 Pattern,
@@ -269,9 +267,9 @@ const Message =
 const Term =
     sequence(
         TermIdentifier,
-        maybe(inlineSpace).hidden,
-        char("=").hidden,
-        maybe(inlineSpace).hidden,
+        between(
+            maybe(inlineSpace),
+            char("=").hidden),
         Pattern,
         repeat(Attribute),
         lineEnd.hidden)
