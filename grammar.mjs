@@ -2,12 +2,7 @@ import * as FTL from "./ast.mjs";
 import {
     always, and, char, charset, either, eof, lazy, maybe, not, regex, repeat,
     repeat1, sequence, string, } from "./parsers.mjs";
-
-// Mapping helpers
-const assign = extra =>
-    obj => Object.assign(obj, extra);
-const flatten = list =>
-    list.reduce((acc, cur) => acc.concat(cur), []);
+import {assign, join, flatten} from "./util.mjs";
 
 const lineEnd =
     either(
@@ -20,18 +15,22 @@ const inlineSpace =
     repeat1(
         either(
             char("\u0020"),
-            char("\u0009"))).str;
+            char("\u0009")))
+    .map(join);
 
 const blankLine =
     sequence(
         maybe(inlineSpace),
-        lineEnd).str;
+        lineEnd)
+    .map(join);
 
 const breakIndent =
     sequence(
         lineEnd,
-        repeat(blankLine).str,
-        inlineSpace).str;
+        repeat(blankLine),
+        inlineSpace)
+    .map(flatten(1))
+    .map(join)
 
 const otherChar =
     charset("\u0021-\uD7FF\uE000-\uFFFD");
@@ -46,14 +45,14 @@ const textChar =
         // regex(/\\u[0-9a-fA-F]{4}/),
         sequence(
             backslash.hidden,
-            backslash).str,
+            backslash).map(join),
         sequence(
             backslash.hidden,
-            char("{")).str,
+            char("{")).map(join),
         and(
             not(backslash),
             not(char("{")),
-            otherChar));
+            otherChar))
 
 const textCont =
     sequence(
@@ -62,13 +61,15 @@ const textCont =
             not(char(".")),
             not(char("*")),
             not(char("[")),
-            not(char("}")))).str;
+            not(char("}"))))
+    .map(join);
 
 const TextElement =
     repeat1(
         either(
             textChar,
-            textCont)).str
+            textCont))
+    .map(join)
     .into(FTL.TextElement);
 
 const quotedTextChar =
@@ -78,19 +79,24 @@ const quotedTextChar =
             textChar),
         sequence(
             backslash.hidden,
-            quote).str);
+            quote).map(join));
 
 const quotedText =
     sequence(
         quote.hidden,
-        repeat(quotedTextChar).str,
-        quote.hidden).str
+        repeat(quotedTextChar),
+        quote.hidden)
+    .map(flatten(1))
+    .map(join)
 
 const identifier =
     sequence(
         charset("a-zA-Z"),
+        always(null),
         repeat(
-            charset("a-zA-Z0-9_-")).str).str;
+            charset("a-zA-Z0-9_-")))
+    .map(flatten(1))
+    .map(join)
 
 const Identifier =
     identifier.into(FTL.Identifier);
@@ -98,13 +104,15 @@ const Identifier =
 const TermIdentifier =
     sequence(
         char("-"),
-        identifier).str
+        identifier)
+    .map(join)
     .into(FTL.Identifier);
 
 const ExternalIdentifier =
     sequence(
         char("$").hidden,
-        identifier).str
+        identifier)
+    .map(join)
     .into(FTL.Identifier);
 
 const InlineExpression =
@@ -119,7 +127,7 @@ const Variant =
         breakIndent.hidden,
         char("[").hidden,
         maybe(inlineSpace).hidden,
-        repeat1(charset("a-z")).str,
+        repeat1(charset("a-z")).map(join),
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,
@@ -132,7 +140,7 @@ const DefaultVariant =
         char("*").hidden,
         char("[").hidden,
         maybe(inlineSpace).hidden,
-        repeat1(charset("a-z")).str,
+        repeat1(charset("a-z")).map(join),
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,
@@ -145,7 +153,7 @@ const variantList =
         repeat(Variant),
         DefaultVariant,
         repeat(Variant))
-    .map(flatten);
+    .map(flatten(1));
 
 const SelectExpression =
     sequence(
@@ -238,7 +246,9 @@ const Comment =
         sequence(
             char("#").hidden,
             maybe(commentLine),
-            lineEnd).str).str
+            lineEnd))
+    .map(flatten(1))
+    .map(join)
     .into(FTL.Comment);
 
 const GroupComment =
@@ -246,7 +256,9 @@ const GroupComment =
         sequence(
             string("##").hidden,
             maybe(commentLine),
-            lineEnd).str).str
+            lineEnd))
+    .map(flatten(1))
+    .map(join)
     .into(FTL.GroupComment);
 
 const ResourceComment =
@@ -254,7 +266,9 @@ const ResourceComment =
         sequence(
             string("###").hidden,
             maybe(commentLine),
-            lineEnd).str).str
+            lineEnd))
+    .map(flatten(1))
+    .map(join)
     .into(FTL.ResourceComment);
 
 const Entry =
@@ -275,7 +289,9 @@ const Junk =
             not(Comment),
             sequence(
                 regex(/.*/),
-                lineEnd).str)).str
+                lineEnd)))
+    .map(flatten(1))
+    .map(join)
     .into(FTL.Junk);
 
 export default

@@ -1,5 +1,6 @@
 import Stream from "./stream.mjs";
 import {Success, Failure} from "./result.mjs";
+import {join} from "./util.mjs";
 
 export class Parser {
     constructor(parse) {
@@ -13,6 +14,7 @@ export class Parser {
         try {
             return this.parse(stream);
         } catch (err) {
+            // console.error(err);
             return new Failure(err.message, stream);
         }
     }
@@ -20,14 +22,6 @@ export class Parser {
     // Hidden parsers match and consume the input, and always yield null.
     get hidden() {
         return this.map(() => Symbol.for("hidden"));
-    }
-
-    // Join the list of parsed values into a string.
-    get str() {
-        return this.map(values =>
-            values
-                .filter(value => typeof value !== "symbol")
-                .join(""));
     }
 
     into(ctor) {
@@ -86,7 +80,7 @@ export function charset(range) {
 }
 
 export function string(str) {
-    return sequence(...str.split("").map(char)).str;
+    return sequence(...str.split("").map(char)).map(join);
 }
 
 export function eof() {
