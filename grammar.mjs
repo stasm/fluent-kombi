@@ -32,6 +32,19 @@ const breakIndent =
     .map(flatten(1))
     .map(join)
 
+const digit = charset("0-9");
+
+const number =
+    sequence(
+        maybe(char("-")),
+        repeat1(digit),
+        maybe(
+            sequence(
+                char("."),
+                repeat1(digit))))
+    .map(flatten(2))
+    .map(join)
+
 const otherChar =
     charset("\u0021-\uD7FF\uE000-\uFFFD");
 
@@ -118,6 +131,7 @@ const ExternalIdentifier =
 const InlineExpression =
     either(
         quotedText.into(FTL.StringExpression),
+        number.into(FTL.NumberExpression),
         Identifier.into(FTL.MessageReference),
         TermIdentifier.into(FTL.MessageReference),
         ExternalIdentifier.into(FTL.ExternalArgument));
