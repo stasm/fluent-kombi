@@ -249,30 +249,21 @@ const Attribute =
         Pattern)
     .spreadInto(FTL.Attribute);
 
-const messageWithValue =
-    sequence(
-        Identifier,
-        maybe(inlineSpace).hidden,
-        char("=").hidden,
-        maybe(inlineSpace).hidden,
-        Pattern,
-        repeat(Attribute),
-        lineEnd.hidden)
-
-const messageWithoutValue =
-    sequence(
-        Identifier,
-        maybe(inlineSpace).hidden,
-        char("=").hidden,
-        maybe(inlineSpace).hidden,
-        always(null),
-        repeat1(Attribute),
-        lineEnd.hidden)
-
 const Message =
-    either(
-        messageWithValue,
-        messageWithoutValue)
+    sequence(
+        Identifier,
+        maybe(inlineSpace).hidden,
+        char("=").hidden,
+        maybe(inlineSpace).hidden,
+        either(
+            sequence(
+                Pattern,
+                repeat(Attribute)),
+            sequence(
+                always(null),
+                repeat1(Attribute))),
+        lineEnd.hidden)
+    .map(flatten(1))
     .spreadInto(FTL.Message);
 
 const Term =
