@@ -335,6 +335,7 @@ const Junk =
     repeat1(
         and(
             not(Message),
+            not(Term),
             not(ResourceComment),
             not(GroupComment),
             not(Comment),

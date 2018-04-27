@@ -47,10 +47,15 @@ foo = Foo
 ### Resource Comment
 `,
 
-    junk: "ą = Żółw"
+    junk: "ą = Żółw",
+    brand: `
+# License Comment
+
+-brand-name = Aurora
+`
 };
 
-fluent.run(ftls.selexpr).fold(pretty, console.error);
+fluent.run(ftls.brand).fold(pretty, console.error);
 
 function pretty(obj) {
     console.log(util.inspect(obj, {depth: null, colors: "auto"}));
