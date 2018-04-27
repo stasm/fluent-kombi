@@ -105,7 +105,6 @@ const quotedText =
 const identifier =
     sequence(
         charset("a-zA-Z"),
-        always(null),
         repeat(
             charset("a-zA-Z0-9_-")))
     .map(flatten(1))
