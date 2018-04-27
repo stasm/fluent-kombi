@@ -4,31 +4,31 @@ import {
     repeat, repeat1, sequence, string } from "./parsers.mjs";
 import {assign, join, flatten, print} from "./util.mjs";
 
-const lineEnd =
+const line_end =
     either(
         string("\u000D\u000A"),
         char("\u000A"),
         char("\u000D"),
         eof());
 
-const inlineSpace =
+const inline_space =
     repeat1(
         either(
             char("\u0020"),
             char("\u0009")))
     .map(join);
 
-const blankLine =
+const blank_line =
     sequence(
-        maybe(inlineSpace),
-        lineEnd)
+        maybe(inline_space),
+        line_end)
     .map(join);
 
-const breakIndent =
+const break_indent =
     sequence(
-        lineEnd,
-        repeat(blankLine),
-        inlineSpace)
+        line_end,
+        repeat(blank_line),
+        inline_space)
     .map(flatten(1))
     .map(join)
 
@@ -45,15 +45,15 @@ const number =
     .map(flatten(2))
     .map(join)
 
-const otherChar =
+const other_char =
     charset("\u0021-\uD7FF\uE000-\uFFFD");
 
 const backslash = char("\\");
 const quote = char("\"");
 
-const textChar =
+const text_char =
     either(
-        inlineSpace,
+        inline_space,
         // XXX unescape?
         // regex(/\\u[0-9a-fA-F]{4}/),
         sequence(
@@ -65,11 +65,11 @@ const textChar =
         and(
             not(backslash),
             not(char("{")),
-            otherChar))
+            other_char))
 
-const textCont =
+const text_cont =
     sequence(
-        breakIndent,
+        break_indent,
         and(
             not(char(".")),
             not(char("*")),
@@ -80,24 +80,24 @@ const textCont =
 const TextElement =
     repeat1(
         either(
-            textChar,
-            textCont))
+            text_char,
+            text_cont))
     .map(join)
     .into(FTL.TextElement);
 
-const quotedTextChar =
+const quoted_text_char =
     either(
         and(
             not(quote),
-            textChar),
+            text_char),
         sequence(
             backslash.hidden,
             quote).map(join));
 
-const quotedText =
+const quoted_text =
     between(
         quote,
-        repeat(quotedTextChar))
+        repeat(quoted_text_char))
     .map(join)
 
 const identifier =
@@ -135,7 +135,7 @@ const Function =
     .into(FTL.Function);
 
 const StringExpression =
-    quotedText.into(FTL.StringExpression);
+    quoted_text.into(FTL.StringExpression);
 
 const NumberExpression =
     number.into(FTL.NumberExpression);
@@ -161,7 +161,7 @@ const VariantName =
     repeat(
         and(
             not(char("]")),
-            otherChar))
+            other_char))
     .map(join)
     .into(FTL.VariantName);
 
@@ -173,31 +173,31 @@ const VariantKey =
 
 const Variant = () =>
     sequence(
-        breakIndent.hidden,
+        break_indent.hidden,
         char("[").hidden,
         between(
-            maybe(inlineSpace),
+            maybe(inline_space),
             VariantKey),
         char("]").hidden,
-        maybe(inlineSpace).hidden,
+        maybe(inline_space).hidden,
         Pattern)
     .spreadInto(FTL.Variant);
 
 const DefaultVariant = () =>
     sequence(
-        breakIndent.hidden,
+        break_indent.hidden,
         char("*").hidden,
         char("[").hidden,
         between(
-            maybe(inlineSpace),
+            maybe(inline_space),
             VariantKey),
         char("]").hidden,
-        maybe(inlineSpace).hidden,
+        maybe(inline_space).hidden,
         Pattern)
     .spreadInto(FTL.Variant)
     .map(assign({default: true}));
 
-const variantList =
+const variant_list =
     sequence(
         repeat(Variant),
         DefaultVariant,
@@ -208,10 +208,10 @@ const SelectExpression =
     sequence(
         InlineExpression,
         between(
-            maybe(inlineSpace),
+            maybe(inline_space),
             string("->").hidden),
-        variantList,
-        breakIndent.hidden)
+        variant_list,
+        break_indent.hidden)
     .spreadInto(FTL.SelectExpression);
 
 const BlockExpression =
@@ -221,7 +221,7 @@ const Placeable =
     sequence(
         char("{").hidden,
         between(
-            maybe(inlineSpace),
+            maybe(inline_space),
             either(
                 // Order matters!
                 BlockExpression,
@@ -238,11 +238,11 @@ const Pattern =
 
 const Attribute =
     sequence(
-        breakIndent.hidden,
+        break_indent.hidden,
         char(".").hidden,
         Identifier,
         between(
-            maybe(inlineSpace),
+            maybe(inline_space),
             char("=").hidden),
         Pattern)
     .spreadInto(FTL.Attribute);
@@ -251,7 +251,7 @@ const Message =
     sequence(
         Identifier,
         between(
-            maybe(inlineSpace),
+            maybe(inline_space),
             char("=").hidden),
         either(
             sequence(
@@ -260,7 +260,7 @@ const Message =
             sequence(
                 always(null),
                 repeat1(Attribute))),
-        lineEnd.hidden)
+        line_end.hidden)
     .map(flatten(1))
     .spreadInto(FTL.Message);
 
@@ -268,14 +268,14 @@ const Term =
     sequence(
         TermIdentifier,
         between(
-            maybe(inlineSpace),
+            maybe(inline_space),
             char("=").hidden),
         Pattern,
         repeat(Attribute),
-        lineEnd.hidden)
+        line_end.hidden)
     .spreadInto(FTL.Term);
 
-const commentLine =
+const comment_line =
     sequence(
         char(" "),
         regex(/.*/))
@@ -285,8 +285,8 @@ const Comment =
     repeat1(
         sequence(
             char("#").hidden,
-            maybe(commentLine),
-            lineEnd))
+            maybe(comment_line),
+            line_end))
     .map(flatten(1))
     .map(join)
     .into(FTL.Comment);
@@ -295,8 +295,8 @@ const GroupComment =
     repeat1(
         sequence(
             string("##").hidden,
-            maybe(commentLine),
-            lineEnd))
+            maybe(comment_line),
+            line_end))
     .map(flatten(1))
     .map(join)
     .into(FTL.GroupComment);
@@ -305,8 +305,8 @@ const ResourceComment =
     repeat1(
         sequence(
             string("###").hidden,
-            maybe(commentLine),
-            lineEnd))
+            maybe(comment_line),
+            line_end))
     .map(flatten(1))
     .map(join)
     .into(FTL.ResourceComment);
@@ -330,7 +330,7 @@ const Junk =
             not(Comment),
             sequence(
                 regex(/.*/),
-                lineEnd)))
+                line_end)))
     .map(flatten(1))
     .map(join)
     .into(FTL.Junk);
@@ -338,7 +338,7 @@ const Junk =
 export default
     repeat(
         either(
-            blankLine.hidden,
+            blank_line.hidden,
             Entry,
             Junk))
     .spreadInto(Array)
