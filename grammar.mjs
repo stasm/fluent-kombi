@@ -1,6 +1,6 @@
 import * as FTL from "./ast.mjs";
 import {
-    always, and, char, charset, either, eof, maybe, not, recurse, regex,
+    always, and, char, charset, either, eof, maybe, not, regex,
     repeat, repeat1, sequence, string } from "./parsers.mjs";
 import {assign, join, flatten, print} from "./util.mjs";
 
@@ -173,7 +173,7 @@ const VariantKey =
         NumberExpression,
         VariantName);
 
-const Variant =
+const Variant = () =>
     sequence(
         breakIndent.hidden,
         char("[").hidden,
@@ -182,10 +182,10 @@ const Variant =
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,
-        recurse(() => Pattern))
+        Pattern)
     .spreadInto(FTL.Variant);
 
-const DefaultVariant =
+const DefaultVariant = () =>
     sequence(
         breakIndent.hidden,
         char("*").hidden,
@@ -195,7 +195,7 @@ const DefaultVariant =
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,
-        recurse(() => Pattern))
+        Pattern)
     .spreadInto(FTL.Variant)
     .map(assign({default: true}));
 

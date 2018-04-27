@@ -2,6 +2,11 @@ import Stream from "./stream.mjs";
 import {Success, Failure} from "./result.mjs";
 import {join} from "./util.mjs";
 
+function unwrap(parser) {
+    // Parsers might be defined as () => parser to avoid cyclic dependecies.
+    return parser instanceof Parser ? parser : parser();
+}
+
 export class Parser {
     constructor(parse) {
         this.parse = parse;
@@ -92,7 +97,7 @@ export function eof() {
 
 export function lookahead(parser) {
     return new Parser(stream =>
-        parser
+        unwrap(parser)
             .run(stream)
             .fold(
                 value => new Success(value, stream),
@@ -101,7 +106,7 @@ export function lookahead(parser) {
 
 export function not(parser) {
     return new Parser(stream =>
-        parser
+        unwrap(parser)
             .run(stream)
             .fold(
                 (value, tail) => new Failure("not failed", stream),
@@ -119,7 +124,7 @@ export function and(...parsers) {
 export function either(...parsers) {
     return new Parser(stream => {
         for (const parser of parsers) {
-            const result = parser.run(stream);
+            const result = unwrap(parser).run(stream);
             if (result instanceof Success) {
                 return result;
             }
@@ -138,7 +143,7 @@ export function never(value) {
 
 export function maybe(parser) {
     return new Parser(stream =>
-        parser
+        unwrap(parser)
             .run(stream)
             .fold(
                 (value, tail) => new Success(value, tail),
@@ -146,8 +151,8 @@ export function maybe(parser) {
 }
 
 export function append(p1, p2) {
-    return p1.chain(values =>
-        p2.map(value => values.concat([value])));
+    return unwrap(p1).chain(values =>
+        unwrap(p2).map(value => values.concat([value])));
 }
 
 export function sequence(...parsers) {
@@ -158,24 +163,24 @@ export function sequence(...parsers) {
 
 export function repeat(parser) {
     return new Parser(stream =>
-        parser.run(stream).fold(
-            (value, tail) =>
-                repeat(parser)
-                    .map(rest => [value].concat(rest))
-                    .run(tail),
-            (value, tail) => new Success([], stream)));
+        unwrap(parser)
+            .run(stream)
+            .fold(
+                (value, tail) =>
+                    repeat(parser)
+                        .map(rest => [value].concat(rest))
+                        .run(tail),
+                (value, tail) => new Success([], stream)));
 }
 
 export function repeat1(parser) {
     return new Parser(stream =>
-        parser.run(stream).fold(
-            (value, tail) =>
-                repeat(parser)
-                    .map(rest => [value].concat(rest))
-                    .run(tail),
-            (value, tail) => new Failure("repeat1 failed", stream)));
-}
-
-export function recurse(fn) {
-    return new Parser(stream => fn().run(stream));
+        unwrap(parser)
+            .run(stream)
+            .fold(
+                (value, tail) =>
+                    repeat(parser)
+                        .map(rest => [value].concat(rest))
+                        .run(tail),
+                (value, tail) => new Failure("repeat1 failed", stream)));
 }
