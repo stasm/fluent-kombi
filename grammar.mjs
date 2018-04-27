@@ -127,16 +127,34 @@ const ExternalIdentifier =
     .map(join)
     .into(FTL.Identifier);
 
+const Function =
+    sequence(
+        charset("A-Z"),
+        repeat(
+            charset("A-Z_?-")))
+    .map(flatten(1))
+    .map(join)
+    .into(FTL.Function);
+
 const StringExpression =
     quotedText.into(FTL.StringExpression);
 
 const NumberExpression =
     number.into(FTL.NumberExpression);
 
+const CallExpression =
+    sequence(
+        Function,
+        char("(").hidden,
+        // XXX Add arguments.
+        char(")").hidden)
+    .spreadInto(FTL.CallExpression);
+
 const InlineExpression =
     either(
         StringExpression,
         NumberExpression,
+        CallExpression, // Must be before MessageReference
         Identifier.into(FTL.MessageReference),
         TermIdentifier.into(FTL.MessageReference),
         ExternalIdentifier.into(FTL.ExternalArgument));

@@ -28,7 +28,7 @@ foo = Foo {msg} {"abc"} {-term} Bar
 `,
 
     selexpr: `
-new-messages = { $num ->
+new-messages = { BUILTIN() ->
         [0] Zero
        *[other] Other
     }
