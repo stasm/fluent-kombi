@@ -2,7 +2,7 @@ import * as FTL from "./ast.mjs";
 import {
     always, and, char, charset, either, eof, lazy, maybe, not, regex, repeat,
     repeat1, sequence, string, } from "./parsers.mjs";
-import {assign, join, flatten} from "./util.mjs";
+import {assign, join, flatten, print} from "./util.mjs";
 
 const lineEnd =
     either(
@@ -128,20 +128,40 @@ const ExternalIdentifier =
     .map(join)
     .into(FTL.Identifier);
 
+const StringExpression =
+    quotedText.into(FTL.StringExpression);
+
+const NumberExpression =
+    number.into(FTL.NumberExpression);
+
 const InlineExpression =
     either(
-        quotedText.into(FTL.StringExpression),
-        number.into(FTL.NumberExpression),
+        StringExpression,
+        NumberExpression,
         Identifier.into(FTL.MessageReference),
         TermIdentifier.into(FTL.MessageReference),
         ExternalIdentifier.into(FTL.ExternalArgument));
+
+const VariantName =
+    repeat(
+        and(
+            not(char("]")),
+            otherChar))
+    .map(join)
+    .into(FTL.VariantName);
+
+const VariantKey =
+    either(
+        // Meh. It's not really an expression.
+        NumberExpression,
+        VariantName);
 
 const Variant =
     sequence(
         breakIndent.hidden,
         char("[").hidden,
         maybe(inlineSpace).hidden,
-        repeat1(charset("a-z")).map(join),
+        VariantKey,
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,
@@ -154,7 +174,7 @@ const DefaultVariant =
         char("*").hidden,
         char("[").hidden,
         maybe(inlineSpace).hidden,
-        repeat1(charset("a-z")).map(join),
+        VariantKey,
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,

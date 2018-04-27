@@ -14,7 +14,7 @@ export class Parser {
         try {
             return this.parse(stream);
         } catch (err) {
-            // console.error(err);
+            // console.error(err.message);
             return new Failure(err.message, stream);
         }
     }

@@ -29,7 +29,7 @@ foo = Foo {msg} {"abc"} {-term} Bar
 
     selexpr: `
 new-messages = { $num ->
-        [one] One
+        [0] Zero
        *[other] Other
     }
 `,
@@ -50,7 +50,7 @@ foo = Foo
     junk: "ą = Żółw"
 };
 
-fluent.run(ftls.expr).fold(pretty, console.error);
+fluent.run(ftls.selexpr).fold(pretty, console.error);
 
 function pretty(obj) {
     console.log(util.inspect(obj, {depth: null, colors: "auto"}));

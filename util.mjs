@@ -16,3 +16,6 @@ export const join = list =>
     list
         .filter(value => typeof value !== "symbol")
         .join("");
+
+export const print = x =>
+    (console.log(x), x);
