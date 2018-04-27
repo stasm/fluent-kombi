@@ -176,6 +176,6 @@ export function repeat1(parser) {
             (value, tail) => new Failure("repeat1 failed", stream)));
 }
 
-export function lazy(fn) {
+export function recurse(fn) {
     return new Parser(stream => fn().run(stream));
 }

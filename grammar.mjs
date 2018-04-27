@@ -1,7 +1,7 @@
 import * as FTL from "./ast.mjs";
 import {
-    always, and, char, charset, either, eof, lazy, maybe, not, regex, repeat,
-    repeat1, sequence, string, } from "./parsers.mjs";
+    always, and, char, charset, either, eof, maybe, not, recurse, regex,
+    repeat, repeat1, sequence, string } from "./parsers.mjs";
 import {assign, join, flatten, print} from "./util.mjs";
 
 const lineEnd =
@@ -182,7 +182,7 @@ const Variant =
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,
-        lazy(() => Pattern))
+        recurse(() => Pattern))
     .spreadInto(FTL.Variant);
 
 const DefaultVariant =
@@ -195,7 +195,7 @@ const DefaultVariant =
         maybe(inlineSpace).hidden,
         char("]").hidden,
         maybe(inlineSpace).hidden,
-        lazy(() => Pattern))
+        recurse(() => Pattern))
     .spreadInto(FTL.Variant)
     .map(assign({default: true}));
 
