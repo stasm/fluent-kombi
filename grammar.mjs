@@ -335,7 +335,7 @@ const Junk =
     .map(join)
     .into(FTL.Junk);
 
-export default
+export const Resource =
     repeat(
         either(
             blank_line.hidden,

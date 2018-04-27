@@ -4,7 +4,7 @@ const { PerformanceObserver, performance } = perf;
 import FluentSyntax from "fluent-syntax";
 import FluentRuntime from "fluent";
 
-import fluent from "./grammar.mjs";
+import fluent from "./";
 
 new PerformanceObserver(items => {
     const [{name, duration}] = items.getEntries();
@@ -28,4 +28,3 @@ performance.mark('start3');
 FluentRuntime._parse(ftl);
 performance.mark('end3');
 performance.measure("fluent (runtime)", 'start3', 'end3');
-
