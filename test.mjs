@@ -3,48 +3,54 @@ import fluent from "./";
 
 const ftls = {
     test: `
-
-
-# Hello
-#
-# There
-ą=Invalid identifier
-ć=Another one
 bar =
     .placeholder = ąćęłńóśźż
+ą=Invalid identifier
+ć=Another one
 -brand-name = Aurora
     .gender = feminine
 ### Resource Comment
 
-x Junk1
-y Junk2
-# Standalone
-
-# Another standalone
-## Group
-## Comment
     .attr = c
-foo = Foo
+`,
 
+    multiline: `
 key=Value
 
     Continued \\{
     .title=
 
         Title`,
+
     expr: `
 foo = Foo {msg} {"abc"} {-term} Bar
-    {$ext}
+    {$ext} {1} {-3.14}
 `,
+
     selexpr: `
 new-messages = { $num ->
         [one] One
        *[other] Other
     }
-`
+`,
+
+    foo: "foo=FOO",
+
+    comments: `
+# Standalone Comment
+
+# Message Comment
+foo = Foo
+
+# Another standalone
+## Group Comment
+### Resource Comment
+`,
+
+    junk: "ą = Żółw"
 };
 
-fluent.run(ftls.selexpr).fold(pretty, console.error);
+fluent.run(ftls.expr).fold(pretty, console.error);
 
 function pretty(obj) {
     console.log(util.inspect(obj, {depth: null, colors: "auto"}));
