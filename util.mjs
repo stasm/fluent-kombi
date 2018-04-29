@@ -12,7 +12,7 @@ export const flatten = depth =>
         []);
 
 // Join the list of parsed values into a string.
-export const join = list =>
+export const to_string = list =>
     list
         .filter(value => typeof value !== "symbol")
         .join("");

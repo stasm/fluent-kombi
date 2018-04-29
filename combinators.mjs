@@ -1,6 +1,6 @@
 import Parser from "./parser.mjs";
 import {Success, Failure} from "./result.mjs";
-import {join} from "./util.mjs";
+import {to_string} from "./util.mjs";
 
 function unwrap(parser) {
     // Parsers might be defined as () => parser to avoid cyclic dependecies.
@@ -33,7 +33,7 @@ export function charset(range) {
 }
 
 export function string(str) {
-    return sequence(...str.split("").map(char)).map(join);
+    return sequence(...str.split("").map(char)).map(to_string);
 }
 
 export function eof() {

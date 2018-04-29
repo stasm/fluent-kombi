@@ -2,7 +2,7 @@ import * as FTL from "./ast.mjs";
 import {
     always, and, between, char, charset, either, eof, maybe, not, regex,
     repeat, repeat1, sequence, string } from "./combinators.mjs";
-import {assign, join, flatten, print} from "./util.mjs";
+import {assign, flatten, print, to_string} from "./util.mjs";
 
 const line_end =
     either(
@@ -16,13 +16,13 @@ const inline_space =
         either(
             char("\u0020"),
             char("\u0009")))
-    .map(join);
+    .map(to_string);
 
 const blank_line =
     sequence(
         maybe(inline_space),
         line_end)
-    .map(join);
+    .map(to_string);
 
 const break_indent =
     sequence(
@@ -30,7 +30,7 @@ const break_indent =
         repeat(blank_line),
         inline_space)
     .map(flatten(1))
-    .map(join)
+    .map(to_string)
 
 const digit = charset("0-9");
 
@@ -43,7 +43,7 @@ const number =
                 char("."),
                 repeat1(digit))))
     .map(flatten(2))
-    .map(join)
+    .map(to_string)
 
 const other_char =
     charset("\u0021-\uD7FF\uE000-\uFFFD");
@@ -58,10 +58,10 @@ const text_char =
         // regex(/\\u[0-9a-fA-F]{4}/),
         sequence(
             backslash.hidden,
-            backslash).map(join),
+            backslash).map(to_string),
         sequence(
             backslash.hidden,
-            char("{")).map(join),
+            char("{")).map(to_string),
         and(
             not(backslash),
             not(char("{")),
@@ -75,14 +75,14 @@ const text_cont =
             not(char("*")),
             not(char("[")),
             not(char("}"))))
-    .map(join);
+    .map(to_string);
 
 const TextElement =
     repeat1(
         either(
             text_char,
             text_cont))
-    .map(join)
+    .map(to_string)
     .into(FTL.TextElement);
 
 const quoted_text_char =
@@ -92,13 +92,13 @@ const quoted_text_char =
             text_char),
         sequence(
             backslash.hidden,
-            quote).map(join));
+            quote).map(to_string));
 
 const quoted_text =
     between(
         quote,
         repeat(quoted_text_char))
-    .map(join)
+    .map(to_string)
 
 const identifier =
     sequence(
@@ -106,7 +106,7 @@ const identifier =
         repeat(
             charset("a-zA-Z0-9_-")))
     .map(flatten(1))
-    .map(join)
+    .map(to_string)
 
 const Identifier =
     identifier.into(FTL.Identifier);
@@ -115,14 +115,14 @@ const TermIdentifier =
     sequence(
         char("-"),
         identifier)
-    .map(join)
+    .map(to_string)
     .into(FTL.Identifier);
 
 const ExternalIdentifier =
     sequence(
         char("$").hidden,
         identifier)
-    .map(join)
+    .map(to_string)
     .into(FTL.Identifier);
 
 const Function =
@@ -131,7 +131,7 @@ const Function =
         repeat(
             charset("A-Z_?-")))
     .map(flatten(1))
-    .map(join)
+    .map(to_string)
     .into(FTL.Function);
 
 const StringExpression =
@@ -162,7 +162,7 @@ const VariantName =
         and(
             not(char("]")),
             other_char))
-    .map(join)
+    .map(to_string)
     .into(FTL.VariantName);
 
 const VariantKey =
@@ -288,7 +288,7 @@ const Comment =
             maybe(comment_line),
             line_end))
     .map(flatten(1))
-    .map(join)
+    .map(to_string)
     .into(FTL.Comment);
 
 const GroupComment =
@@ -298,7 +298,7 @@ const GroupComment =
             maybe(comment_line),
             line_end))
     .map(flatten(1))
-    .map(join)
+    .map(to_string)
     .into(FTL.GroupComment);
 
 const ResourceComment =
@@ -308,7 +308,7 @@ const ResourceComment =
             maybe(comment_line),
             line_end))
     .map(flatten(1))
-    .map(join)
+    .map(to_string)
     .into(FTL.ResourceComment);
 
 const Entry =
