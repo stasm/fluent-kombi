@@ -43,6 +43,7 @@ new-messages = { BUILTIN() ->
 foo = Foo
 
 # Another standalone
+#
 #      with indent
 ## Group Comment
 ### Resource Comment

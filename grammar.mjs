@@ -290,38 +290,43 @@ const Term =
         new FTL.Term(id, value, attributes));
 
 const comment_line =
-    sequence(
-        char(" "),
-        regex(/.*/))
-    .map(([space, text]) => text);
+    either(
+        sequence(
+            line_end.as()),
+        sequence(
+            char(" "),
+            regex(/.*/).as(),
+            line_end.as()))
+    .map(to_array)
+    .map(to_string);
 
 const Comment =
     repeat1(
         sequence(
-            char("#").hidden,
-            maybe(comment_line),
-            line_end))
+            char("#"),
+            comment_line.as("line")))
     .map(flatten(1))
+    .map(to_array)
     .map(to_string)
     .into(FTL.Comment);
 
 const GroupComment =
     repeat1(
         sequence(
-            string("##").hidden,
-            maybe(comment_line),
-            line_end))
+            string("##"),
+            comment_line.as("line")))
     .map(flatten(1))
+    .map(to_array)
     .map(to_string)
     .into(FTL.GroupComment);
 
 const ResourceComment =
     repeat1(
         sequence(
-            string("###").hidden,
-            maybe(comment_line),
-            line_end))
+            string("###"),
+            comment_line.as("line")))
     .map(flatten(1))
+    .map(to_array)
     .map(to_string)
     .into(FTL.ResourceComment);
 
