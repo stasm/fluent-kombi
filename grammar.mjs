@@ -1,7 +1,7 @@
 import * as FTL from "./ast.mjs";
 import {
     always, and, between, char, charset, either, eof, maybe, not, regex,
-    repeat, repeat1, sequence, string } from "./parsers.mjs";
+    repeat, repeat1, sequence, string } from "./combinators.mjs";
 import {assign, join, flatten, print} from "./util.mjs";
 
 const line_end =
