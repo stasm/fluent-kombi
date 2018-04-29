@@ -1,7 +1,7 @@
-// Mapping helpers
+import {Alias} from "./parser.mjs";
 
-export const assign = extra =>
-    obj => Object.assign(obj, extra);
+// Mapping helpers
+// ---------------
 
 export const flatten = depth =>
     list => list.reduce(
@@ -16,6 +16,20 @@ export const to_string = list =>
     list
         .filter(value => typeof value !== "symbol")
         .join("");
+
+// Map a list of {name, value} aliases into an array of values.
+export const to_array = list =>
+    list
+        .filter(value => value instanceof Alias)
+        .map(({value}) => value);
+
+// Merge a list of {name, value} aliases into an object.
+export const to_object = list =>
+    list
+        .filter(value => value instanceof Alias)
+        .reduce(
+            (obj, {name, value}) => Object.assign(obj, {[name]: value}),
+            {});
 
 export const print = x =>
     (console.log(x), x);

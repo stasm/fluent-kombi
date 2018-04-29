@@ -1,6 +1,13 @@
 import Stream from "./stream.mjs";
 import {Failure} from "./result.mjs";
 
+export class Alias {
+    constructor(name, value) {
+        this.name = name;
+        this.value = value;
+    }
+}
+
 export default class Parser {
     constructor(parse) {
         this.parse = parse;
@@ -23,15 +30,12 @@ export default class Parser {
         return this.map(() => Symbol.for("hidden"));
     }
 
-    into(ctor) {
-        return this.map(value => new ctor(value));
+    as(name) {
+        return this.map(value => new Alias(name, value));
     }
 
-    spreadInto(ctor) {
-        // Filter out parsed results yielded by hidden parsers.
-        const pruneHidden = value => value !== Symbol.for("hidden");
-        return this.map(values =>
-            new ctor(...values.filter(pruneHidden)));
+    into(ctor) {
+        return this.map(value => new ctor(value));
     }
 
     map(f) {
