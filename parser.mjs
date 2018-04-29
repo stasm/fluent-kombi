@@ -25,11 +25,6 @@ export default class Parser {
         }
     }
 
-    // Hidden parsers match and consume the input, and always yield null.
-    get hidden() {
-        return this.map(() => Symbol.for("hidden"));
-    }
-
     as(name) {
         return this.map(value => new Alias(name, value));
     }

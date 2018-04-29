@@ -14,8 +14,9 @@ bar =
     .attr = c
 `,
 
+    // Escape backslashes twice: once for JS, once for Fluent.
     multiline: `
-key=Value
+key=Value with \\\\ (an escaped backslash)
 
     Continued \\{
     .title=

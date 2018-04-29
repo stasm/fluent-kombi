@@ -103,8 +103,13 @@ export function append(p1, p2) {
         unwrap(p2).map(value => values.concat([value])));
 }
 
-export function between(padding, parser) {
-    return sequence(padding, parser, padding)
+export function after(prefix, parser) {
+    return sequence(prefix, parser)
+        .map(([left, value]) => value);
+}
+
+export function between(delim, parser) {
+    return sequence(delim, parser, delim)
         .map(([left, value, right]) => value);
 }
 

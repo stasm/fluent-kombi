@@ -1,6 +1,6 @@
 import * as FTL from "./ast.mjs";
 import {
-    always, and, between, char, charset, either, eof, maybe, not, regex,
+    after, always, and, between, char, charset, either, eof, maybe, not, regex,
     repeat, repeat1, sequence, string } from "./combinators.mjs";
 import {flatten, print, to_array, to_object, to_string} from "./util.mjs";
 
@@ -56,12 +56,12 @@ const text_char =
         inline_space,
         // XXX unescape?
         // regex(/\\u[0-9a-fA-F]{4}/),
-        sequence(
-            backslash.hidden,
-            backslash).map(to_string),
-        sequence(
-            backslash.hidden,
-            char("{")).map(to_string),
+        after(
+            backslash,
+            backslash),
+        after(
+            backslash,
+            char("{")),
         and(
             not(backslash),
             not(char("{")),
@@ -90,9 +90,9 @@ const quoted_text_char =
         and(
             not(quote),
             text_char),
-        sequence(
-            backslash.hidden,
-            quote).map(to_string));
+        after(
+            backslash,
+            quote));
 
 const quoted_text =
     between(

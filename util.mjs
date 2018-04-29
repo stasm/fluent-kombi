@@ -14,7 +14,7 @@ export const flatten = depth =>
 // Join the list of parsed values into a string.
 export const to_string = list =>
     list
-        .filter(value => typeof value !== "symbol")
+        .filter(value => value !== Symbol.for("eof"))
         .join("");
 
 // Map a list of {name, value} aliases into an array of values.
