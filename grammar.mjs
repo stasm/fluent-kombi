@@ -2,7 +2,8 @@ import * as FTL from "./ast.mjs";
 import {
     after, always, and, between, char, charset, either, eof, maybe, not, regex,
     repeat, repeat1, sequence, string } from "./combinators.mjs";
-import {flatten, print, to_array, to_object, to_string} from "./util.mjs";
+import {flatten, mutate, print, to_array, to_object, to_string} from "./util.mjs";
+import into from "./abstract.mjs";
 
 const line_end =
     either(
@@ -83,7 +84,7 @@ const TextElement =
             text_char,
             text_cont))
     .map(to_string)
-    .into(FTL.TextElement);
+    .map(into(FTL.TextElement));
 
 const quoted_text_char =
     either(
@@ -109,14 +110,14 @@ const identifier =
     .map(to_string)
 
 const Identifier =
-    identifier.into(FTL.Identifier);
+    identifier.map(into(FTL.Identifier));
 
 const TermIdentifier =
     sequence(
         char("-"),
         identifier)
     .map(to_string)
-    .into(FTL.Identifier);
+    .map(into(FTL.Identifier));
 
 const ExternalIdentifier =
     sequence(
@@ -133,13 +134,13 @@ const Function =
             charset("A-Z_?-")))
     .map(flatten(1))
     .map(to_string)
-    .into(FTL.Function);
+    .map(into(FTL.Function));
 
 const StringExpression =
-    quoted_text.into(FTL.StringExpression);
+    quoted_text.map(into(FTL.StringExpression));
 
 const NumberExpression =
-    number.into(FTL.NumberExpression);
+    number.map(into(FTL.NumberExpression));
 
 const CallExpression =
     sequence(
@@ -148,17 +149,16 @@ const CallExpression =
         // TODO Add arguments.
         char(")"))
     .map(to_object)
-    .map(({callee}) =>
-        new FTL.CallExpression(callee));
+    .map(into(FTL.CallExpression));
 
 const InlineExpression =
     either(
         StringExpression,
         NumberExpression,
         CallExpression, // Must be before MessageReference
-        Identifier.into(FTL.MessageReference),
-        TermIdentifier.into(FTL.MessageReference),
-        ExternalIdentifier.into(FTL.ExternalArgument));
+        Identifier.map(into(FTL.MessageReference)),
+        TermIdentifier.map(into(FTL.MessageReference)),
+        ExternalIdentifier.map(into(FTL.ExternalArgument)));
 
 const VariantName =
     repeat(
@@ -166,7 +166,7 @@ const VariantName =
             not(char("]")),
             other_char))
     .map(to_string)
-    .into(FTL.VariantName);
+    .map(into(FTL.VariantName));
 
 const VariantKey =
     either(
@@ -185,8 +185,7 @@ const Variant = () =>
         maybe(inline_space),
         Pattern.as("value"))
     .map(to_object)
-    .map(({key, value}) =>
-        new FTL.Variant(key, value));
+    .map(into(FTL.Variant));
 
 const DefaultVariant = () =>
     sequence(
@@ -200,8 +199,8 @@ const DefaultVariant = () =>
         maybe(inline_space),
         Pattern.as("value"))
     .map(to_object)
-    .map(({key, value}) =>
-        new FTL.Variant(key, value, true));
+    .map(into(FTL.Variant))
+    .map(mutate({default: true}));
 
 const variant_list =
     sequence(
@@ -219,8 +218,7 @@ const SelectExpression =
         variant_list.as("variants"),
         break_indent)
     .map(to_object)
-    .map(({selector, variants}) =>
-        new FTL.SelectExpression(selector, variants));
+    .map(into(FTL.SelectExpression));
 
 const BlockExpression =
     SelectExpression;
@@ -236,15 +234,14 @@ const Placeable =
                 InlineExpression).as("expression")),
         char("}"))
     .map(to_object)
-    .map(({expression}) =>
-        new FTL.Placeable(expression));
+    .map(into(FTL.Placeable));
 
 const Pattern =
     repeat1(
         either(
             TextElement,
             Placeable))
-    .into(FTL.Pattern);
+    .map(into(FTL.Pattern));
 
 const Attribute =
     sequence(
@@ -256,8 +253,7 @@ const Attribute =
             char("=")),
         Pattern.as("value"))
     .map(to_object)
-    .map(({id, value}) =>
-        new FTL.Attribute(id, value));
+    .map(into(FTL.Attribute));
 
 const Message =
     sequence(
@@ -273,8 +269,7 @@ const Message =
         line_end)
     .map(flatten(1))
     .map(to_object)
-    .map(({id, value = null, attributes}) =>
-        new FTL.Message(id, value, attributes));
+    .map(into(FTL.Message));
 
 const Term =
     sequence(
@@ -286,8 +281,7 @@ const Term =
         repeat(Attribute).as("attributes"),
         line_end)
     .map(to_object)
-    .map(({id, value = null, attributes}) =>
-        new FTL.Term(id, value, attributes));
+    .map(into(FTL.Term));
 
 const comment_line =
     either(
@@ -308,7 +302,7 @@ const Comment =
     .map(flatten(1))
     .map(to_array)
     .map(to_string)
-    .into(FTL.Comment);
+    .map(into(FTL.Comment));
 
 const GroupComment =
     repeat1(
@@ -318,7 +312,7 @@ const GroupComment =
     .map(flatten(1))
     .map(to_array)
     .map(to_string)
-    .into(FTL.GroupComment);
+    .map(into(FTL.GroupComment));
 
 const ResourceComment =
     repeat1(
@@ -328,7 +322,7 @@ const ResourceComment =
     .map(flatten(1))
     .map(to_array)
     .map(to_string)
-    .into(FTL.ResourceComment);
+    .map(into(FTL.ResourceComment));
 
 const Entry =
     either(
@@ -352,7 +346,7 @@ const Junk =
                 line_end)))
     .map(flatten(1))
     .map(to_string)
-    .into(FTL.Junk);
+    .map(into(FTL.Junk));
 
 export const Resource =
     repeat(
@@ -361,5 +355,4 @@ export const Resource =
             Entry.as("entry"),
             Junk.as("junk")))
     .map(to_array)
-    .map(body =>
-        new FTL.Resource(body));
+    .map(into(FTL.Resource));

@@ -11,6 +11,9 @@ export const flatten = depth =>
                 : flatten(depth - 1)(cur)),
         []);
 
+export const mutate = prop =>
+    obj => Object.assign(obj, prop);
+
 // Join the list of parsed values into a string.
 export const to_string = list =>
     list

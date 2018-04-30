@@ -29,10 +29,6 @@ export default class Parser {
         return this.map(value => new Alias(name, value));
     }
 
-    into(ctor) {
-        return this.map(value => new ctor(value));
-    }
-
     map(f) {
         return new Parser(stream => this.run(stream).map(f));
     }
