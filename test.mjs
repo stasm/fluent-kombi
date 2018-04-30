@@ -33,6 +33,9 @@ new-messages = { BUILTIN() ->
         [0] Zero
        *[other] {""}Other
     }
+invalid-selector = { -term[case] ->
+       *[key] value
+    }
 `,
 
     foo: "foo=FOO",
