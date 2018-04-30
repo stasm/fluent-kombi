@@ -26,6 +26,9 @@ export default function into(ctor) {
         case FTL.Variant:
             return ({key, value}) =>
                 new ctor(key, value);
+        case FTL.VariantExpression:
+            return ({ref, key}) =>
+                new ctor(ref, key);
         default:
             return (...args) => new ctor(...args);
     }
