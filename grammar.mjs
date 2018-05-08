@@ -261,6 +261,7 @@ const SelectExpression =
 
 const VariantList =
     sequence(
+        always(null).as("selector"),
         variant_list.as("variants"),
         break_indent)
     .map(to_object)
