@@ -1,7 +1,8 @@
 import * as FTL from "./ast.mjs";
 import {
-    after, always, and, between, char, charset, either, eof, maybe, not, regex,
-    repeat, repeat1, sequence, string } from "./combinators.mjs";
+    after, always, and, between, char, charset, defer, either, eof, maybe, not,
+    regex, repeat, repeat1, sequence, string
+} from "./combinators.mjs";
 import {flatten, mutate, print, to_array, to_object, to_string} from "./util.mjs";
 import into from "./abstract.mjs";
 
@@ -157,21 +158,20 @@ const NamedArgument =
     .map(to_object)
     .map(into(FTL.NamedArgument));
 
-const Argument = () =>
+const Argument = defer(() =>
     between(
         maybe(inline_space),
         either(
             NamedArgument,
-            InlineExpression));
+            InlineExpression)));
 
 const argument_list =
     sequence(
-        // either() lazy-unwraps Argument.
-        either(Argument).as(),
+        Argument.as(),
         repeat(
             sequence(
                 char(","),
-                either(Argument).as())),
+                Argument.as())),
         maybe(char(",")))
     .map(flatten(2))
     .map(to_array);
@@ -205,16 +205,16 @@ const TermAttributeExpression =
     .map(to_object)
     .map(into(FTL.AttributeExpression));
 
-const TermVariantExpression = () =>
+const TermVariantExpression = defer(() =>
     sequence(
         TermIdentifier.as("id"),
         char("["),
         VariantKey.as("key"),
         char("]"))
     .map(to_object)
-    .map(into(FTL.VariantExpression));
+    .map(into(FTL.VariantExpression)));
 
-const InlineExpression = () =>
+const InlineExpression = defer(() =>
     either(
         StringExpression,
         NumberExpression,
@@ -224,7 +224,7 @@ const InlineExpression = () =>
         Identifier.map(into(FTL.MessageReference)),
         TermIdentifier.map(into(FTL.MessageReference)),
         ExternalIdentifier.map(into(FTL.ExternalArgument)),
-        Placeable);
+        Placeable));
 
 const SelectorExpression =
     either(
@@ -262,7 +262,7 @@ const VariantKey =
         NumberExpression,
         VariantName);
 
-const Variant = () =>
+const Variant = defer(() =>
     sequence(
         break_indent,
         char("["),
@@ -273,9 +273,9 @@ const Variant = () =>
         maybe(inline_space),
         Pattern.as("value"))
     .map(to_object)
-    .map(into(FTL.Variant));
+    .map(into(FTL.Variant)));
 
-const DefaultVariant = () =>
+const DefaultVariant = defer(() =>
     sequence(
         break_indent,
         char("*"),
@@ -288,7 +288,7 @@ const DefaultVariant = () =>
         Pattern.as("value"))
     .map(to_object)
     .map(into(FTL.Variant))
-    .map(mutate({default: true}));
+    .map(mutate({default: true})));
 
 const variant_list =
     sequence(
