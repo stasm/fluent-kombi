@@ -184,6 +184,14 @@ const InlineExpression = () =>
         ExternalIdentifier.map(into(FTL.ExternalArgument)),
         Placeable);
 
+const SelectorExpression =
+    either(
+        StringExpression,
+        NumberExpression,
+        CallExpression,
+        AttributeExpression,
+        ExternalIdentifier.map(into(FTL.ExternalArgument)));
+
 const word =
     repeat1(
         and(
@@ -249,8 +257,7 @@ const variant_list =
 
 const SelectExpression =
     sequence(
-        // Use either() to lazy-unwrap InlineExpression.
-        either(InlineExpression).as("selector"),
+        SelectorExpression.as("selector"),
         between(
             maybe(inline_space),
             string("->")),

@@ -37,7 +37,7 @@ new-messages = { BUILTIN() ->
         [0] Zero
        *[other] {""}Other
     }
-invalid-selector = { -term[case] ->
+invalid-selector = { msg.case ->
        *[    many     words    ] value
     }
 variant-list = {
