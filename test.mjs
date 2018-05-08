@@ -34,7 +34,7 @@ new-messages = { BUILTIN() ->
        *[other] {""}Other
     }
 invalid-selector = { -term[case] ->
-       *[key] value
+       *[    many     words    ] value
     }
 `,
 

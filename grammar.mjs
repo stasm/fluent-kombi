@@ -46,6 +46,10 @@ const number =
     .map(flatten(2))
     .map(to_string)
 
+// Any Unicode character from BMP excluding C0 control characters, space,
+// surrogate blocks and non-characters (U+FFFE, U+FFFF).
+// Cf. https://www.w3.org/TR/REC-xml/#NT-Char
+// TODO Add characters from other planes: U+10000 to U+10FFFF.
 const other_char =
     charset("\u0021-\uD7FF\uE000-\uFFFD");
 
@@ -170,11 +174,25 @@ const InlineExpression =
         TermIdentifier.map(into(FTL.MessageReference)),
         ExternalIdentifier.map(into(FTL.ExternalArgument)));
 
-const VariantName =
-    repeat(
+const word =
+    repeat1(
         and(
+            not(char("[")),
             not(char("]")),
+            not(char("{")),
+            not(char("}")),
+            not(backslash),
             other_char))
+    .map(to_string);
+
+const VariantName =
+    sequence(
+        word,
+        repeat(
+            sequence(
+                inline_space,
+                word)))
+    .map(flatten(2))
     .map(to_string)
     .map(into(FTL.VariantName));
 
