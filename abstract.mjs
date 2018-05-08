@@ -21,7 +21,8 @@ export default function into(ctor) {
             return body =>
                 new ctor(body);
         case FTL.SelectExpression:
-            return into_select_expression;
+            return ({selector, variants}) =>
+                new ctor(selector, variants);
         case FTL.Term:
             return ({id, value, attributes}) =>
                 new ctor(id, value, attributes);
@@ -34,16 +35,4 @@ export default function into(ctor) {
         default:
             return (...args) => new ctor(...args);
     }
-}
-
-function into_select_expression({selector, variants}) {
-    const expr = new FTL.SelectExpression(selector, variants);
-
-    if (selector instanceof FTL.VariantExpression) {
-        expr.addAnnotation(
-            new FTL.Annotation(
-                "W0000", null, "Invalid: VariantExpression as selector."));
-    }
-
-    return expr;
 }

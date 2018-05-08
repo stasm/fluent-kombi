@@ -13,15 +13,6 @@ export class BaseNode {
  * Base class for AST nodes which can have Spans.
  */
 export class SyntaxNode extends BaseNode {
-    constructor() {
-        super();
-        this.annotations = [];
-    }
-
-    addAnnotation(annot) {
-        this.annotations.push(annot);
-    }
-
     addSpan(start, end) {
         this.span = new Span(start, end);
     }
@@ -39,6 +30,11 @@ export class Entry extends SyntaxNode {
     constructor() {
         super();
         this.type = "Entry";
+        this.annotations = [];
+    }
+
+    addAnnotation(annot) {
+        this.annotations.push(annot);
     }
 }
 
@@ -258,16 +254,12 @@ export class Span extends BaseNode {
     }
 }
 
-export class Annotation extends BaseNode {
+export class Annotation extends SyntaxNode {
     constructor(code, args = [], message) {
         super();
         this.type = "Annotation";
         this.code = code;
         this.args = args;
         this.message = message;
-    }
-
-    addSpan(start, end) {
-        this.span = new Span(start, end);
     }
 }

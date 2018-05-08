@@ -155,7 +155,7 @@ const CallExpression =
     .map(to_object)
     .map(into(FTL.CallExpression));
 
-const AttributeExpression =
+const MessageAttributeExpression =
     sequence(
         Identifier.as("id"),
         char("."),
@@ -163,7 +163,15 @@ const AttributeExpression =
     .map(to_object)
     .map(into(FTL.AttributeExpression));
 
-const VariantExpression = () =>
+const TermAttributeExpression =
+    sequence(
+        TermIdentifier.as("id"),
+        char("."),
+        Identifier.as("name"))
+    .map(to_object)
+    .map(into(FTL.AttributeExpression));
+
+const TermVariantExpression = () =>
     sequence(
         TermIdentifier.as("id"),
         char("["),
@@ -177,8 +185,8 @@ const InlineExpression = () =>
         StringExpression,
         NumberExpression,
         CallExpression, // Must be before MessageReference
-        AttributeExpression,
-        VariantExpression,
+        MessageAttributeExpression,
+        TermVariantExpression,
         Identifier.map(into(FTL.MessageReference)),
         TermIdentifier.map(into(FTL.MessageReference)),
         ExternalIdentifier.map(into(FTL.ExternalArgument)),
@@ -189,7 +197,7 @@ const SelectorExpression =
         StringExpression,
         NumberExpression,
         CallExpression,
-        AttributeExpression,
+        TermAttributeExpression,
         ExternalIdentifier.map(into(FTL.ExternalArgument)));
 
 const word =
