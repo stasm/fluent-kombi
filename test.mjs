@@ -26,6 +26,7 @@ key=Value with \\\\ (an escaped backslash)
     expr: `
 foo = Foo {msg} {"abc"} {-term} Bar
     {$ext} {1} {-3.14} {-term[case]}
+    {msg.attr}
 `,
     nested: `
 foo = {{{1}}}

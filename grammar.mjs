@@ -155,9 +155,17 @@ const CallExpression =
     .map(to_object)
     .map(into(FTL.CallExpression));
 
+const AttributeExpression =
+    sequence(
+        Identifier.as("id"),
+        char("."),
+        Identifier.as("name"))
+    .map(to_object)
+    .map(into(FTL.AttributeExpression));
+
 const VariantExpression = () =>
     sequence(
-        TermIdentifier.map(into(FTL.MessageReference)).as("ref"),
+        TermIdentifier.as("id"),
         char("["),
         VariantKey.as("key"),
         char("]"))
@@ -169,6 +177,7 @@ const InlineExpression = () =>
         StringExpression,
         NumberExpression,
         CallExpression, // Must be before MessageReference
+        AttributeExpression,
         VariantExpression,
         Identifier.map(into(FTL.MessageReference)),
         TermIdentifier.map(into(FTL.MessageReference)),

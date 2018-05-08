@@ -5,6 +5,9 @@ export default function into(ctor) {
         case FTL.Attribute:
             return ({id, value}) =>
                 new ctor(id, value);
+        case FTL.AttributeExpression:
+            return ({id, name}) =>
+                new ctor(id, name);
         case FTL.CallExpression:
             return ({callee}) =>
                 new ctor(callee);
