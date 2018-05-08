@@ -248,8 +248,17 @@ const SelectExpression =
     .map(to_object)
     .map(into(FTL.SelectExpression));
 
+const VariantList =
+    sequence(
+        variant_list.as("variants"),
+        break_indent)
+    .map(to_object)
+    .map(into(FTL.SelectExpression));
+
 const BlockExpression =
-    SelectExpression;
+    either(
+        SelectExpression,
+        VariantList);
 
 const Placeable =
     sequence(

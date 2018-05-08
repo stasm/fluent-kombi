@@ -36,6 +36,9 @@ new-messages = { BUILTIN() ->
 invalid-selector = { -term[case] ->
        *[    many     words    ] value
     }
+variant-list = {
+       *[key] value
+    }
 `,
 
     foo: "foo=FOO",
