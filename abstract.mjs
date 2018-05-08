@@ -12,7 +12,7 @@ export default function into(ctor) {
             return ({callee, args}) =>
                 new ctor(callee, args);
         case FTL.Message:
-            return ({id, value = null, attributes}) =>
+            return ({id, value, attributes}) =>
                 new ctor(id, value, attributes);
         case FTL.NamedArgument:
             return ({name, value}) =>

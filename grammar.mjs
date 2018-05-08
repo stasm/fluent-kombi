@@ -363,7 +363,9 @@ const Message =
             sequence(
                 Pattern.as("value"),
                 repeat(Attribute).as("attributes")),
-            repeat1(Attribute).as("attributes")),
+            sequence(
+                always(null).as("value"),
+                repeat1(Attribute).as("attributes"))),
         line_end)
     .map(flatten(1))
     .map(to_object)
