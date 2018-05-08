@@ -22,6 +22,7 @@ key=Value with \\\\ (an escaped backslash)
     .title=
 
         Title`,
+    unicode: "foo = \\u0041",
 
     expr: `
 foo = Foo {msg} {"abc"} {-term} Bar

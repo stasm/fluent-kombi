@@ -59,8 +59,7 @@ const quote = char("\"");
 const text_char =
     either(
         inline_space,
-        // XXX unescape?
-        // regex(/\\u[0-9a-fA-F]{4}/),
+        regex(/\\u[0-9a-fA-F]{4}/),
         after(
             backslash,
             backslash),
