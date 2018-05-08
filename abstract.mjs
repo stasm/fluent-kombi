@@ -9,11 +9,14 @@ export default function into(ctor) {
             return ({id, name}) =>
                 new ctor(id, name);
         case FTL.CallExpression:
-            return ({callee}) =>
-                new ctor(callee);
+            return ({callee, args}) =>
+                new ctor(callee, args);
         case FTL.Message:
             return ({id, value = null, attributes}) =>
                 new ctor(id, value, attributes);
+        case FTL.NamedArgument:
+            return ({name, value}) =>
+                new ctor(name, value);
         case FTL.Placeable:
             return ({expression}) =>
                 new ctor(expression);

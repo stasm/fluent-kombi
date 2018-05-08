@@ -146,11 +146,49 @@ const StringExpression =
 const NumberExpression =
     number.map(into(FTL.NumberExpression));
 
+const NamedArgument =
+    sequence(
+        Identifier.as("name"),
+        between(
+            maybe(inline_space),
+            char(":")),
+        either(
+            StringExpression,
+            NumberExpression).as("value"))
+    .map(to_object)
+    .map(into(FTL.NamedArgument));
+
+const Argument = () =>
+    either(
+        NamedArgument,
+        InlineExpression);
+
+const argument_list =
+    sequence(
+        // either() lazy-unwraps Argument.
+        either(Argument).as(),
+        repeat(
+            sequence(
+                between(
+                    maybe(inline_space),
+                    char(",")),
+                either(Argument).as())),
+        maybe(
+            between(
+                maybe(inline_space),
+                char(","))))
+    .map(flatten(2))
+    .map(to_array);
+
 const CallExpression =
     sequence(
         Function.as("callee"),
         char("("),
-        // TODO Add arguments.
+        between(
+            maybe(inline_space),
+            either(
+                argument_list,
+                always([])).as("args")),
         char(")"))
     .map(to_object)
     .map(into(FTL.CallExpression));

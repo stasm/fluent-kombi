@@ -31,6 +31,9 @@ foo = Foo {msg} {"abc"} {-term} Bar
     nested: `
 foo = {{{1}}}
 `,
+    call: `
+foo = {FUN(  "a"  , msg,   x: "X",   )}{ANOTHER(  )}
+`,
 
     selexpr: `
 new-messages = { BUILTIN() ->
