@@ -164,7 +164,7 @@ const VariantExpression = () =>
     .map(to_object)
     .map(into(FTL.VariantExpression));
 
-const InlineExpression =
+const InlineExpression = () =>
     either(
         StringExpression,
         NumberExpression,
@@ -172,7 +172,8 @@ const InlineExpression =
         VariantExpression,
         Identifier.map(into(FTL.MessageReference)),
         TermIdentifier.map(into(FTL.MessageReference)),
-        ExternalIdentifier.map(into(FTL.ExternalArgument)));
+        ExternalIdentifier.map(into(FTL.ExternalArgument)),
+        Placeable);
 
 const word =
     repeat1(
@@ -239,7 +240,8 @@ const variant_list =
 
 const SelectExpression =
     sequence(
-        InlineExpression.as("selector"),
+        // Use either() to lazy-unwrap InlineExpression.
+        either(InlineExpression).as("selector"),
         between(
             maybe(inline_space),
             string("->")),

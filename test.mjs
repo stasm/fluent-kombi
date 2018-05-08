@@ -27,6 +27,9 @@ key=Value with \\\\ (an escaped backslash)
 foo = Foo {msg} {"abc"} {-term} Bar
     {$ext} {1} {-3.14} {-term[case]}
 `,
+    nested: `
+foo = {{{1}}}
+`,
 
     selexpr: `
 new-messages = { BUILTIN() ->
