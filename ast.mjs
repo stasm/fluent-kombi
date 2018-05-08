@@ -142,10 +142,10 @@ export class AttributeExpression extends Expression {
 }
 
 export class VariantExpression extends Expression {
-    constructor(ref, key) {
+    constructor(id, key) {
         super();
         this.type = "VariantExpression";
-        this.ref = ref;
+        this.id = id;
         this.key = key;
     }
 }
