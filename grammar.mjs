@@ -159,9 +159,11 @@ const NamedArgument =
     .map(into(FTL.NamedArgument));
 
 const Argument = () =>
-    either(
-        NamedArgument,
-        InlineExpression);
+    between(
+        maybe(inline_space),
+        either(
+            NamedArgument,
+            InlineExpression));
 
 const argument_list =
     sequence(
@@ -169,14 +171,9 @@ const argument_list =
         either(Argument).as(),
         repeat(
             sequence(
-                between(
-                    maybe(inline_space),
-                    char(",")),
+                char(","),
                 either(Argument).as())),
-        maybe(
-            between(
-                maybe(inline_space),
-                char(","))))
+        maybe(char(",")))
     .map(flatten(2))
     .map(to_array);
 
