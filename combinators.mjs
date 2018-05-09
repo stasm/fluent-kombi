@@ -65,10 +65,8 @@ export function not(parser) {
 
 export function and(...parsers) {
     const final = parsers.pop();
-    return sequence(
-        ...parsers.map(lookahead),
-        final).map(
-            results => results[results.length - 1]);
+    return sequence(...parsers.map(lookahead), final)
+        .map(results => results[results.length - 1]);
 }
 
 export function either(...parsers) {

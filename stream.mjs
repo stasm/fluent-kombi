@@ -13,7 +13,7 @@ export default class Stream {
             throw new TypeError("index out of range");
         }
 
-        if (this.length == 0) {
+        if (this.length === 0) {
             return Symbol.for("eof");
         }
 

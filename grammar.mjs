@@ -32,7 +32,7 @@ const break_indent =
         repeat(blank_line),
         inline_space)
     .map(flatten(1))
-    .map(to_string)
+    .map(to_string);
 
 const digit = charset("0-9");
 
@@ -45,7 +45,7 @@ const number =
                 char("."),
                 repeat1(digit))))
     .map(flatten(2))
-    .map(to_string)
+    .map(to_string);
 
 // Any Unicode character from BMP excluding C0 control characters, space,
 // surrogate blocks and non-characters (U+FFFE, U+FFFF).
@@ -70,7 +70,7 @@ const text_char =
         and(
             not(backslash),
             not(char("{")),
-            other_char))
+            other_char));
 
 const text_cont =
     sequence(
@@ -103,7 +103,7 @@ const quoted_text =
     between(
         quote,
         repeat(quoted_text_char))
-    .map(to_string)
+    .map(to_string);
 
 const identifier =
     sequence(
@@ -111,7 +111,7 @@ const identifier =
         repeat(
             charset("a-zA-Z0-9_-")))
     .map(flatten(1))
-    .map(to_string)
+    .map(to_string);
 
 const Identifier =
     identifier.map(into(FTL.Identifier));
