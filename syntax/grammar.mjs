@@ -426,15 +426,6 @@ const ResourceComment =
     .map(to_string)
     .map(into(FTL.ResourceComment));
 
-const Entry =
-    either(
-        either(
-            ResourceComment,
-            GroupComment,
-            Comment),
-        Message,
-        Term);
-
 const Junk =
     repeat1(
         and(
@@ -450,11 +441,21 @@ const Junk =
     .map(to_string)
     .map(into(FTL.Junk));
 
+const Entry =
+    either(
+        either(
+            ResourceComment,
+            GroupComment,
+            Comment),
+        Message,
+        Term,
+        Junk);
+
+
 export const Resource =
     repeat(
         either(
             blank_line,
-            Entry.as("entry"),
-            Junk.as("junk")))
+            Entry.as("entry")))
     .map(to_array)
     .map(into(FTL.Resource));
