@@ -1,6 +1,14 @@
--brand-name = Aurora
-    .gender = feminine
+-term01 = Value
+    .attr = Attribute
 
-# Error (Missing value)
--brand-name =
-    .gender = feminine
+-term02 = {""}
+
+# JUNK Missing value
+-term03 =
+    .attr = Attribute
+
+# JUNK Missing value
+-term04 =
+
+# JUNK Missing =
+-term05

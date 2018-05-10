@@ -6,14 +6,14 @@
             "annotations": [],
             "id": {
                 "type": "Identifier",
-                "name": "-brand-name"
+                "name": "-term01"
             },
             "value": {
                 "type": "Pattern",
                 "elements": [
                     {
                         "type": "TextElement",
-                        "value": "Aurora"
+                        "value": "Value"
                     }
                 ]
             },
@@ -22,14 +22,14 @@
                     "type": "Attribute",
                     "id": {
                         "type": "Identifier",
-                        "name": "gender"
+                        "name": "attr"
                     },
                     "value": {
                         "type": "Pattern",
                         "elements": [
                             {
                                 "type": "TextElement",
-                                "value": "feminine"
+                                "value": "Attribute"
                             }
                         ]
                     }
@@ -38,14 +38,56 @@
             "comment": null
         },
         {
+            "type": "Term",
+            "annotations": [],
+            "id": {
+                "type": "Identifier",
+                "name": "-term02"
+            },
+            "value": {
+                "type": "Pattern",
+                "elements": [
+                    {
+                        "type": "Placeable",
+                        "expression": {
+                            "type": "StringExpression",
+                            "value": ""
+                        }
+                    }
+                ]
+            },
+            "attributes": [],
+            "comment": null
+        },
+        {
             "type": "Comment",
             "annotations": [],
-            "content": "Error (Missing value)\n"
+            "content": "JUNK Missing value\n"
         },
         {
             "type": "Junk",
             "annotations": [],
-            "content": "-brand-name =\n    .gender = feminine\n"
+            "content": "-term03 =\n    .attr = Attribute\n\n"
+        },
+        {
+            "type": "Comment",
+            "annotations": [],
+            "content": "JUNK Missing value\n"
+        },
+        {
+            "type": "Junk",
+            "annotations": [],
+            "content": "-term04 =\n\n"
+        },
+        {
+            "type": "Comment",
+            "annotations": [],
+            "content": "JUNK Missing =\n"
+        },
+        {
+            "type": "Junk",
+            "annotations": [],
+            "content": "-term05\n"
         }
     ]
 }

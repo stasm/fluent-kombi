@@ -18,3 +18,8 @@ variant-list =
     {
        *[key] value
     }
+
+empty-variant =
+    { 1 ->
+       *[one] {""}
+    }

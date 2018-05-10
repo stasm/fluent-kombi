@@ -13,3 +13,11 @@ key03 =
 key04 =
     .attr1 = Attribute 1
     .attr2 = Attribute 2
+
+key05 = {""}
+
+# JUNK Missing value
+key05 =
+
+# JUNK Missing =
+key06

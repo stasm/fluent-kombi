@@ -179,6 +179,48 @@
                 }
             ],
             "comment": null
+        },
+        {
+            "type": "Message",
+            "annotations": [],
+            "id": {
+                "type": "Identifier",
+                "name": "key05"
+            },
+            "value": {
+                "type": "Pattern",
+                "elements": [
+                    {
+                        "type": "Placeable",
+                        "expression": {
+                            "type": "StringExpression",
+                            "value": ""
+                        }
+                    }
+                ]
+            },
+            "attributes": [],
+            "comment": null
+        },
+        {
+            "type": "Comment",
+            "annotations": [],
+            "content": "JUNK Missing value\n"
+        },
+        {
+            "type": "Junk",
+            "annotations": [],
+            "content": "key05 =\n\n"
+        },
+        {
+            "type": "Comment",
+            "annotations": [],
+            "content": "JUNK Missing =\n"
+        },
+        {
+            "type": "Junk",
+            "annotations": [],
+            "content": "key06\n"
         }
     ]
 }
