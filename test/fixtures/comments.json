@@ -7,11 +7,6 @@
             "content": "Standalone Comment\n"
         },
         {
-            "type": "Comment",
-            "annotations": [],
-            "content": "Message Comment\n"
-        },
-        {
             "type": "Message",
             "annotations": [],
             "id": {
@@ -28,7 +23,34 @@
                 ]
             },
             "attributes": [],
-            "comment": null
+            "comment": {
+                "type": "Comment",
+                "annotations": [],
+                "content": "Message Comment\n"
+            }
+        },
+        {
+            "type": "Term",
+            "annotations": [],
+            "id": {
+                "type": "Identifier",
+                "name": "-term"
+            },
+            "value": {
+                "type": "Pattern",
+                "elements": [
+                    {
+                        "type": "TextElement",
+                        "value": "Term"
+                    }
+                ]
+            },
+            "attributes": [],
+            "comment": {
+                "type": "Comment",
+                "annotations": [],
+                "content": "Term Comment\nwith a blank last line.\n\n"
+            }
         },
         {
             "type": "Comment",

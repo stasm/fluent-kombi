@@ -355,8 +355,9 @@ const Attribute =
     .map(to_object)
     .map(into(FTL.Attribute));
 
-const Message =
+const Message = defer(() =>
     sequence(
+        maybe(Comment).as("comment"),
         Identifier.as("id"),
         between(
             maybe(inline_space),
@@ -371,10 +372,11 @@ const Message =
         line_end)
     .map(flatten(1))
     .map(to_object)
-    .map(into(FTL.Message));
+    .map(into(FTL.Message)));
 
-const Term =
+const Term = defer(() =>
     sequence(
+        maybe(Comment).as("comment"),
         TermIdentifier.as("id"),
         between(
             maybe(inline_space),
@@ -383,7 +385,7 @@ const Term =
         repeat(Attribute).as("attributes"),
         line_end)
     .map(to_object)
-    .map(into(FTL.Term));
+    .map(into(FTL.Term)));
 
 const comment_line =
     either(
@@ -443,12 +445,12 @@ const Junk =
 
 const Entry =
     either(
+        Message,
+        Term,
         either(
             ResourceComment,
             GroupComment,
             Comment),
-        Message,
-        Term,
         Junk);
 
 

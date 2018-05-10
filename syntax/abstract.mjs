@@ -12,8 +12,8 @@ export default function into(ctor) {
             return ({callee, args}) =>
                 new ctor(callee, args);
         case FTL.Message:
-            return ({id, value, attributes}) =>
-                new ctor(id, value, attributes);
+            return ({id, value, attributes, comment}) =>
+                new ctor(id, value, attributes, comment);
         case FTL.NamedArgument:
             return ({name, value}) =>
                 new ctor(name, value);
@@ -27,8 +27,8 @@ export default function into(ctor) {
             return ({selector, variants}) =>
                 new ctor(selector, variants);
         case FTL.Term:
-            return ({id, value, attributes}) =>
-                new ctor(id, value, attributes);
+            return ({id, value, attributes, comment}) =>
+                new ctor(id, value, attributes, comment);
         case FTL.Variant:
             return ({key, value}) =>
                 new ctor(key, value);

@@ -69,11 +69,6 @@
             "content": "ą=Invalid identifier\nć=Another one\n\n"
         },
         {
-            "type": "Comment",
-            "annotations": [],
-            "content": "Message Comment\n"
-        },
-        {
             "type": "Message",
             "annotations": [],
             "id": {
@@ -90,7 +85,11 @@
                 ]
             },
             "attributes": [],
-            "comment": null
+            "comment": {
+                "type": "Comment",
+                "annotations": [],
+                "content": "Message Comment\n"
+            }
         },
         {
             "type": "Comment",
