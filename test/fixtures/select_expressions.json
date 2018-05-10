@@ -12,10 +12,6 @@
                 "type": "Pattern",
                 "elements": [
                     {
-                        "type": "TextElement",
-                        "value": "\n    "
-                    },
-                    {
                         "type": "Placeable",
                         "expression": {
                             "type": "SelectExpression",
@@ -88,10 +84,6 @@
                 "type": "Pattern",
                 "elements": [
                     {
-                        "type": "TextElement",
-                        "value": "\n    "
-                    },
-                    {
                         "type": "Placeable",
                         "expression": {
                             "type": "SelectExpression",
@@ -147,10 +139,6 @@
             "value": {
                 "type": "Pattern",
                 "elements": [
-                    {
-                        "type": "TextElement",
-                        "value": "\n    "
-                    },
                     {
                         "type": "Placeable",
                         "expression": {

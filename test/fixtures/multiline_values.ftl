@@ -28,3 +28,8 @@ key06 =
     A multiline value with {"placeables"}
     {"at"} the beginning and the end
     {"of lines"}{"."}
+
+key07 =
+    {"A multiline value"} starting and ending {"with a placeable"}
+
+key08 =     Leading and trailing whitespace.     

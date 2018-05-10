@@ -17,6 +17,9 @@ export default function into(ctor) {
         case FTL.NamedArgument:
             return ({name, value}) =>
                 new ctor(name, value);
+        case FTL.Pattern:
+            return ({elements}) =>
+                new ctor(elements);
         case FTL.Placeable:
             return ({expression}) =>
                 new ctor(expression);

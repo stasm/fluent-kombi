@@ -337,10 +337,15 @@ const Placeable =
     .map(into(FTL.Placeable));
 
 const Pattern =
-    repeat1(
-        either(
-            TextElement,
-            Placeable))
+    sequence(
+        // Trim leading whitespace.
+        maybe(inline_space),
+        maybe(text_cont),
+        repeat1(
+            either(
+                TextElement,
+                Placeable)).as("elements"))
+    .map(to_object)
     .map(into(FTL.Pattern));
 
 const Attribute =

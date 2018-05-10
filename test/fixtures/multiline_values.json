@@ -32,7 +32,7 @@
                 "elements": [
                     {
                         "type": "TextElement",
-                        "value": "\n    A multiline value starting\n    on a new line."
+                        "value": "A multiline value starting\n    on a new line."
                     }
                 ]
             },
@@ -87,7 +87,7 @@
                         "elements": [
                             {
                                 "type": "TextElement",
-                                "value": "\n        A multiline attribute value\n        staring on a new line"
+                                "value": "A multiline attribute value\n        staring on a new line"
                             }
                         ]
                     }
@@ -107,7 +107,7 @@
                 "elements": [
                     {
                         "type": "TextElement",
-                        "value": "\n\n A multiline value with non-standard\n\n     indentation."
+                        "value": "A multiline value with non-standard\n\n     indentation."
                     }
                 ]
             },
@@ -126,7 +126,7 @@
                 "elements": [
                     {
                         "type": "TextElement",
-                        "value": "\n    A multiline value with "
+                        "value": "A multiline value with "
                     },
                     {
                         "type": "Placeable",
@@ -163,6 +163,58 @@
                             "type": "StringExpression",
                             "value": "."
                         }
+                    }
+                ]
+            },
+            "attributes": [],
+            "comment": null
+        },
+        {
+            "type": "Message",
+            "annotations": [],
+            "id": {
+                "type": "Identifier",
+                "name": "key07"
+            },
+            "value": {
+                "type": "Pattern",
+                "elements": [
+                    {
+                        "type": "Placeable",
+                        "expression": {
+                            "type": "StringExpression",
+                            "value": "A multiline value"
+                        }
+                    },
+                    {
+                        "type": "TextElement",
+                        "value": " starting and ending "
+                    },
+                    {
+                        "type": "Placeable",
+                        "expression": {
+                            "type": "StringExpression",
+                            "value": "with a placeable"
+                        }
+                    }
+                ]
+            },
+            "attributes": [],
+            "comment": null
+        },
+        {
+            "type": "Message",
+            "annotations": [],
+            "id": {
+                "type": "Identifier",
+                "name": "key08"
+            },
+            "value": {
+                "type": "Pattern",
+                "elements": [
+                    {
+                        "type": "TextElement",
+                        "value": "Leading and trailing whitespace.     "
                     }
                 ]
             },
