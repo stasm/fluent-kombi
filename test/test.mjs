@@ -28,8 +28,14 @@ async function main(fixtures_dir) {
 
         process.stdout.write(`${ftl_path} `);
 
-        const ftl_source = await readfile(ftl_path);
-        const expected_ast = await readfile(ast_path);
+        try {
+            var ftl_source = await readfile(ftl_path);
+            var expected_ast = await readfile(ast_path);
+        } catch (err) {
+            errors.set(ftl_path, err);
+            console.log(color.red("FAIL"));
+            continue;
+        }
 
         fluent.run(ftl_source).fold(
             assert_equal,
@@ -48,7 +54,11 @@ async function main(fixtures_dir) {
 
     // Print all errors.
     for (const [ftl_path, err] of errors) {
-        console.log(format_error(ftl_path, err));
+        if (err instanceof assert.AssertionError) {
+            console.log(format_assert_error(ftl_path, err));
+        } else {
+            console.log(format_generic_error(ftl_path, err));
+        }
     }
 }
 
@@ -58,11 +68,20 @@ function validate(actual_ast, expected_serialized) {
     assert.deepEqual(actual_json, expected_json);
 }
 
-function format_error(ftl_path, err) {
+function format_assert_error(ftl_path, err) {
         return `
 ========================================================================
 ${color.red("FAIL")} ${ftl_path}
 ------------------------------------------------------------------------
 ${diff(err.expected, err.actual)}
+`;
+}
+
+function format_generic_error(ftl_path, err) {
+        return `
+========================================================================
+${color.red("FAIL")} ${ftl_path}
+------------------------------------------------------------------------
+${err.message}
 `;
 }
