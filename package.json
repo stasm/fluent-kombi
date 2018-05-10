@@ -25,5 +25,8 @@
     "fluent": "^0.6.4",
     "fluent-syntax": "^0.7.0",
     "json-diff": "^0.5.2"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0"
   }
 }

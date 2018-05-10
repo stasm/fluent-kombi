@@ -5,7 +5,7 @@ all: $(AST_FIXTURES)
 
 .PHONY: $(AST_FIXTURES)
 $(AST_FIXTURES): %.json: %.ftl
-	@cat $< | node --experimental-modules ../../bin/parse.mjs \
+	@node --experimental-modules ../../bin/parse.mjs $< \
 		2> /dev/null \
 		1> $@;
 	@echo "$< → $@"
