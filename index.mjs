@@ -1,2 +1,2 @@
-export * from "./ast.mjs";
-export {Resource as default} from "./grammar.mjs";
+export * from "./syntax/ast.mjs";
+export {Resource as default} from "./syntax/grammar.mjs";

@@ -1,10 +1,12 @@
 import * as FTL from "./ast.mjs";
+import into from "./abstract.mjs";
 import {
     after, always, and, between, char, charset, defer, either, eof, maybe, not,
     regex, repeat, repeat1, sequence, string
-} from "./combinators.mjs";
-import {flatten, mutate, print, to_array, to_object, to_string} from "./util.mjs";
-import into from "./abstract.mjs";
+} from "../lib/combinators.mjs";
+import {
+    flatten, mutate, print, to_array, to_object, to_string
+} from "../lib/util.mjs";
 
 const line_end =
     either(
