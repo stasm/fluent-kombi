@@ -5,8 +5,9 @@
   "main": "index.mjs",
   "scripts": {
     "bench": "node --experimental-modules --harmony-async-iteration bench.mjs",
+    "build:fixtures": "make -sC test/fixtures",
     "lint": "eslint *.mjs",
-    "test": "node --experimental-modules test.mjs"
+    "test": "node --experimental-modules test/test.mjs ./test/fixtures"
   },
   "repository": {
     "type": "git",
@@ -19,8 +20,10 @@
   },
   "homepage": "https://github.com/stasm/fluent-kombi#readme",
   "devDependencies": {
+    "cli-color": "^1.2.0",
     "eslint": "^4.19.1",
     "fluent": "^0.6.4",
-    "fluent-syntax": "^0.7.0"
+    "fluent-syntax": "^0.7.0",
+    "json-diff": "^0.5.2"
   }
 }

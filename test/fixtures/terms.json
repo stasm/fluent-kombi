@@ -1,0 +1,51 @@
+{
+    "type": "Resource",
+    "body": [
+        {
+            "type": "Term",
+            "annotations": [],
+            "id": {
+                "type": "Identifier",
+                "name": "-brand-name"
+            },
+            "value": {
+                "type": "Pattern",
+                "elements": [
+                    {
+                        "type": "TextElement",
+                        "value": "Aurora"
+                    }
+                ]
+            },
+            "attributes": [
+                {
+                    "type": "Attribute",
+                    "id": {
+                        "type": "Identifier",
+                        "name": "gender"
+                    },
+                    "value": {
+                        "type": "Pattern",
+                        "elements": [
+                            {
+                                "type": "TextElement",
+                                "value": "feminine"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "comment": null
+        },
+        {
+            "type": "Comment",
+            "annotations": [],
+            "content": "Error (Missing value)\n"
+        },
+        {
+            "type": "Junk",
+            "annotations": [],
+            "content": "-brand-name =\n    .gender = feminine\n"
+        }
+    ]
+}

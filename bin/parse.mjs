@@ -11,7 +11,7 @@ const lines = [];
 
 rl.on("line", line => lines.push(line));
 rl.on("close", () => {
-    const ftl = lines.join("\n");
+    const ftl = lines.join("\n") + "\n";
     fluent.run(ftl).fold(
         ast => console.log(JSON.stringify(ast, null, 4)),
         err => console.error(err));
