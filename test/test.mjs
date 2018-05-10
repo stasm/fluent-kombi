@@ -63,6 +63,6 @@ function format_error(ftl_path, err) {
 ========================================================================
 ${color.red("FAIL")} ${ftl_path}
 ------------------------------------------------------------------------
-${diff(err.actual, err.expected)}
+${diff(err.expected, err.actual)}
 `;
 }
