@@ -209,7 +209,9 @@ const TermVariantExpression = defer(() =>
     sequence(
         TermIdentifier.as("id"),
         char("["),
-        VariantKey.as("key"),
+        between(
+            maybe(inline_space),
+            VariantKey.as("key")),
         char("]"))
     .map(to_object)
     .map(into(FTL.VariantExpression)));

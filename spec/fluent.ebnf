@@ -33,7 +33,7 @@ argument_list              ::= Argument ("," Argument)* ","?
 CallExpression             ::= Function "(" (inline_space? argument_list? inline_space?) ")"
 MessageAttributeExpression ::= Identifier "." Identifier
 TermAttributeExpression    ::= TermIdentifier "." Identifier
-TermVariantExpression      ::= TermIdentifier "[" VariantKey "]"
+TermVariantExpression      ::= TermIdentifier "[" (inline_space? VariantKey inline_space?) "]"
 InlineExpression           ::= StringExpression
                              | NumberExpression
                              | CallExpression
