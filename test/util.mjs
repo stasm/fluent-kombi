@@ -1,4 +1,5 @@
 import fs from 'fs';
+import color from "cli-color";
 import json_diff from "json-diff";
 
 function nonBlank(line) {
@@ -37,3 +38,5 @@ export function readfile(path) {
 }
 
 export const {diffString: diff} = json_diff;
+export const PASS = color.green("PASS");
+export const FAIL = color.red("FAIL");

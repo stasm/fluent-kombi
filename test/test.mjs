@@ -1,7 +1,6 @@
 import assert from "assert";
 import path from "path";
-import color from "cli-color";
-import {readdir, readfile, diff} from './util.mjs';
+import {readdir, readfile, diff, PASS, FAIL} from './util.mjs';
 import fluent from '../';
 
 const fixtures_dir = process.argv[2];
@@ -33,7 +32,7 @@ async function main(fixtures_dir) {
             var expected_ast = await readfile(ast_path);
         } catch (err) {
             errors.set(ftl_path, err);
-            console.log(color.red("FAIL"));
+            console.log(FAIL);
             continue;
         }
 
@@ -44,10 +43,10 @@ async function main(fixtures_dir) {
         function assert_equal(ast) {
             try {
                 validate(ast, expected_ast);
-                console.log(color.green("PASS"));
+                console.log(PASS);
             } catch (err) {
                 errors.set(ftl_path, err);
-                console.log(color.red("FAIL"));
+                console.log(FAIL);
             }
         }
     }
@@ -55,11 +54,13 @@ async function main(fixtures_dir) {
     // Print all errors.
     for (const [ftl_path, err] of errors) {
         if (err instanceof assert.AssertionError) {
-            console.log(format_assert_error(ftl_path, err));
+            print_assert_error(ftl_path, err);
         } else {
-            console.log(format_generic_error(ftl_path, err));
+            print_generic_error(ftl_path, err);
         }
     }
+
+    exit_summary(errors.size);
 }
 
 function validate(actual_ast, expected_serialized) {
@@ -68,20 +69,31 @@ function validate(actual_ast, expected_serialized) {
     assert.deepEqual(actual_json, expected_json);
 }
 
-function format_assert_error(ftl_path, err) {
-        return `
+function print_assert_error(ftl_path, err) {
+    console.log(`
 ========================================================================
-${color.red("FAIL")} ${ftl_path}
+${FAIL} ${ftl_path}
 ------------------------------------------------------------------------
 ${diff(err.expected, err.actual)}
-`;
+`);
 }
 
-function format_generic_error(ftl_path, err) {
-        return `
+function print_generic_error(ftl_path, err) {
+    console.log(`
 ========================================================================
-${color.red("FAIL")} ${ftl_path}
+${FAIL} ${ftl_path}
 ------------------------------------------------------------------------
 ${err.message}
-`;
+`);
+}
+
+function exit_summary(error_count) {
+    const message = error_count
+        ? `Tests ${FAIL}: ${error_count}.`
+        : `All tests ${PASS}.`
+    console.log(`
+========================================================================
+${message}
+`);
+    process.exit(Number(error_count > 0));
 }
