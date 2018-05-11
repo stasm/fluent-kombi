@@ -24,7 +24,7 @@ function serialize_operator({name, args}, state) {
             return args.map(serialize).join(" ");
         }
         case "always": {
-            return "";
+            return null;
         }
         case "and": {
             let operands = args.map(serialize).reverse().join(" ");
@@ -58,7 +58,7 @@ function serialize_operator({name, args}, state) {
             return `${arg}?`;
         }
         case "never": {
-            return "";
+            return null;
         }
         case "not": {
             let [arg] = args.map(serialize);
@@ -77,7 +77,7 @@ function serialize_operator({name, args}, state) {
             return `${arg}+`;
         }
         case "sequence": {
-            return args.map(serialize).join(" ");
+            return args.map(serialize).filter(Boolean).join(" ");
         }
         case "string": {
             let [arg] = args.map(serialize);
