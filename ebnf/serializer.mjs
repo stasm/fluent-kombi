@@ -1,22 +1,24 @@
 export default
-function serialize_rule(rule) {
+function serialize_rule(rule, state) {
     let {name, expression} = rule;
-    return `${name} ::= ${serialize_expression(expression)}`;
+    return `${name} ::= ${serialize_expression(expression, state)}`;
 }
 
-function serialize_expression(expression) {
+function serialize_expression(expression, state) {
     switch (expression.type) {
         case "Symbol":
             return expression.name;
         case "Terminal":
             return expression.value;
         case "Operator":
-            return serialize_operator(expression);
+            return serialize_operator(expression, state);
     }
 }
 
-function serialize_operator({name, args}) {
-    let serialize = serialize_expression;
+function serialize_operator({name, args}, state) {
+    let serialize = expr =>
+        serialize_expression(expr, {...state, parent: name});
+
     switch (name) {
         case "after": {
             return args.map(serialize).join(" ");
@@ -26,7 +28,7 @@ function serialize_operator({name, args}) {
         }
         case "and": {
             let operands = args.map(serialize).reverse().join(" ");
-            return `(${operands})`;
+            return state.parent ? `(${operands})` : operands;
         }
         case "between": {
             let [delim, expr] = args.map(serialize);
@@ -42,7 +44,7 @@ function serialize_operator({name, args}) {
         }
         case "either": {
             let operands = args.map(serialize).join(" | ");
-            return `(${operands})`;
+            return state.parent ? `(${operands})` : operands;
         }
         case "eof": {
             return "EOF";
