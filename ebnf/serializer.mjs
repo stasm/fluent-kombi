@@ -1,7 +1,9 @@
 export default
 function serialize_rule(rule, state) {
     let {name, expression} = rule;
-    return `${name} ::= ${serialize_expression(expression, state)}`;
+    let lhs = name.padEnd(state.max_rule_name);
+    let rhs = serialize_expression(expression, state);
+    return `${lhs} ::= ${rhs}`;
 }
 
 function serialize_expression(expression, state) {
