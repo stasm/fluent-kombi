@@ -85,7 +85,8 @@ function serialize_operator({name, args}, state) {
             return `${arg}+`;
         }
         case "sequence": {
-            return args.map(serialize).filter(Boolean).join(" ");
+            let operands = args.map(serialize).filter(Boolean).join(" ");
+            return state.parent ? `(${operands})` : operands;
         }
         case "string": {
             let [arg] = args.map(serialize);
