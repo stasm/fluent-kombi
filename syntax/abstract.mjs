@@ -9,7 +9,7 @@ export default function into(ctor) {
             return ({id, name}) =>
                 new ctor(id, name);
         case FTL.CallExpression:
-            return ({callee, args}) =>
+            return ({callee, args = []}) =>
                 new ctor(callee, args);
         case FTL.Message:
             return ({id, value, attributes, comment}) =>

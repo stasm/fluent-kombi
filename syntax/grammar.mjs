@@ -184,9 +184,7 @@ const CallExpression =
         char("("),
         between(
             maybe(inline_space),
-            either(
-                argument_list,
-                always([])).as("args")),
+            maybe(argument_list).as("args")),
         char(")"))
     .map(to_object)
     .map(into(FTL.CallExpression));
