@@ -1,7 +1,7 @@
 import fs from "fs";
 import readline from "readline";
 import parse_args from "minimist";
-import ebnf from "./index.mjs";
+import ebnf from "../ebnf";
 
 const argv = parse_args(process.argv.slice(2), {
     boolean: ["help"],
@@ -26,14 +26,14 @@ if (file_path === "-") {
 
 function exit_help(exit_code) {
     console.log(`
-    Usage: node --experimental-modules generate.mjs [OPTIONS] <FILE>
+    Usage: node --experimental-modules ebnf.mjs [OPTIONS] <FILE>
 
     When FILE is "-", read text from stdin.
 
     Examples:
 
-        node --experimental-modules generate.mjs path/to/file.ftl
-        cat path/to/file.ftl | node --experimental-modules generate.mjs -
+        node --experimental-modules ebnf.mjs path/to/grammar.mjs
+        cat path/to/grammar.mjs | node --experimental-modules ebnf.mjs -
 
     Options:
 
