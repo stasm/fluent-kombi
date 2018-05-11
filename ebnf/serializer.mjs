@@ -1,7 +1,7 @@
 export default
 function serialize_rule(rule, state) {
     let {name, expression} = rule;
-    let lhs = name.padEnd(state.max_rule_name);
+    let lhs = name.padEnd(state.max_name_length);
     let rhs = serialize_expression(expression, state);
     return `${lhs} ::= ${rhs}`;
 }
@@ -45,8 +45,14 @@ function serialize_operator({name, args}, state) {
             return `[${arg}]`;
         }
         case "either": {
-            let operands = args.map(serialize).join(" | ");
-            return state.parent ? `(${operands})` : operands;
+            let operands = args.map(serialize);
+            if (state.parent) {
+                return `(${operands.join(" | ")})`;
+            }
+
+            // Add 5 to align with "<rule name> ::= ".
+            let padding = state.max_name_length + 5;
+            return operands.join("\n" + " | ".padStart(padding));
         }
         case "eof": {
             return "EOF";

@@ -8,7 +8,7 @@ function ebnf(source) {
     let grammar_ast = acorn.parse(source, {sourceType: "module"});
     let rules = walk(grammar_ast, visitor);
     let state = {
-        max_rule_name: Math.max(
+        max_name_length: Math.max(
             ...rules.map(rule => rule.name.length)),
     };
     return rules
