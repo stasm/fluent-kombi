@@ -26,12 +26,13 @@ InlineExpression           ::= StringExpression
                              | TermVariantExpression
                              | Identifier
                              | TermIdentifier
-                             | ExternalIdentifier
+                             | ExternalArgument
                              | Placeable
 
 /* Inline Expressions */
 StringExpression           ::= quoted_text
 NumberExpression           ::= number
+ExternalArgument           ::= ExternalIdentifier
 CallExpression             ::= Function "(" (inline_space? argument_list? inline_space?) ")"
 argument_list              ::= Argument ("," Argument)* ","?
 Argument                   ::= inline_space? (NamedArgument | InlineExpression) inline_space?
@@ -53,7 +54,7 @@ SelectorExpression         ::= StringExpression
                              | NumberExpression
                              | CallExpression
                              | TermAttributeExpression
-                             | ExternalIdentifier
+                             | ExternalArgument
 
 /* Identifiers */
 Identifier                 ::= identifier
