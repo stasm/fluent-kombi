@@ -12,6 +12,7 @@ function ebnf(source) {
             ...rules.map(rule => rule.name.length)),
     };
     return rules
+        .reverse()
         .map(rule => serialize(rule, state))
         .join("\n");
 }
