@@ -3,10 +3,22 @@ function serialize_rule(rule, state) {
     let {name, expression, comments} = rule;
     let lhs = name.padEnd(state.max_name_length);
     let rhs = serialize_expression(expression, state);
-    let comment = comments.map(line => `//${line}`).join("\n");
-    return comment
-        ? `${comment}\n${lhs} ::= ${rhs}`
-        : `${lhs} ::= ${rhs}`;
+    let comment = serialize_comments(comments);
+    return `${comment}${lhs} ::= ${rhs}`;
+}
+
+function serialize_comments(comments) {
+    let contents = [];
+    for (let line of comments) {
+        if (/^[ =*/-]*$/.test(line)) {
+            contents.push("");
+        } else {
+            contents.push(`/*${line} */`);
+        }
+    }
+    return contents.length
+        ? contents.join("\n") + "\n"
+        : "";
 }
 
 function serialize_expression(expression, state) {

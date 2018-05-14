@@ -28,6 +28,8 @@ const blank_line =
         line_end)
     .map(to_string);
 
+/* ---------- */
+/* Whitespace */
 const break_indent =
     sequence(
         line_end,
@@ -99,6 +101,8 @@ const quoted_text =
         repeat(quoted_text_char))
     .map(to_string);
 
+/* ------ */
+/* Tokens */
 const identifier =
     sequence(
         charset("a-zA-Z"),
@@ -208,6 +212,9 @@ const TermVariantExpression = defer(() =>
     .map(to_object)
     .map(into(FTL.VariantExpression)));
 
+/* ------------------ */
+/* Inline Expressions */
+
 const InlineExpression = defer(() =>
     either(
         StringExpression,
@@ -291,6 +298,14 @@ const variant_list =
         repeat(Variant))
     .map(flatten(1));
 
+const VariantList =
+    sequence(
+        always(null).as("selector"),
+        variant_list.as("variants"),
+        break_indent)
+    .map(to_object)
+    .map(into(FTL.SelectExpression));
+
 const SelectExpression =
     sequence(
         SelectorExpression.as("selector"),
@@ -302,13 +317,8 @@ const SelectExpression =
     .map(to_object)
     .map(into(FTL.SelectExpression));
 
-const VariantList =
-    sequence(
-        always(null).as("selector"),
-        variant_list.as("variants"),
-        break_indent)
-    .map(to_object)
-    .map(into(FTL.SelectExpression));
+/* ----------------- */
+/* Block Expressions */
 
 const BlockExpression =
     either(
@@ -336,6 +346,8 @@ const TextElement =
     .map(to_string)
     .map(into(FTL.TextElement));
 
+/* ----------------------------------------------- */
+/* Patterns consist of TextElements or Placeables. */
 const Pattern =
     sequence(
         // Trim leading whitespace.
