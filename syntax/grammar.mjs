@@ -84,14 +84,6 @@ const text_cont =
             not(char("}"))))
     .map(to_string);
 
-const TextElement =
-    repeat1(
-        either(
-            text_char,
-            text_cont))
-    .map(to_string)
-    .map(into(FTL.TextElement));
-
 const quoted_text_char =
     either(
         and(
@@ -335,6 +327,14 @@ const Placeable =
         char("}"))
     .map(to_object)
     .map(into(FTL.Placeable));
+
+const TextElement =
+    repeat1(
+        either(
+            text_char,
+            text_cont))
+    .map(to_string)
+    .map(into(FTL.TextElement));
 
 const Pattern =
     sequence(
