@@ -1,7 +1,7 @@
 import assert from "assert";
 import path from "path";
-import {readdir, readfile, diff, PASS, FAIL} from './util.mjs';
-import fluent from '../';
+import {readdir, readfile, diff, PASS, FAIL} from "./util.mjs";
+import fluent from "../";
 
 const fixtures_dir = process.argv[2];
 
@@ -16,7 +16,7 @@ main(fixtures_dir);
 async function main(fixtures_dir) {
     const files = await readdir(fixtures_dir);
     const ftls = files.filter(
-        filename => filename.endsWith('.ftl'));
+        filename => filename.endsWith(".ftl"));
 
     // Collect all AssertionErrors.
     const errors = new Map();
@@ -24,7 +24,7 @@ async function main(fixtures_dir) {
     // Parse each FTL fixture and compare against the expected AST.
     for (const file_name of ftls) {
         const ftl_path = path.join(fixtures_dir, file_name);
-        const ast_path = ftl_path.replace(/ftl$/, 'json');
+        const ast_path = ftl_path.replace(/ftl$/, "json");
 
         process.stdout.write(`${ftl_path} `);
 
@@ -91,7 +91,7 @@ ${err.message}
 function exit_summary(error_count) {
     const message = error_count
         ? `Tests ${FAIL}: ${error_count}.`
-        : `All tests ${PASS}.`
+        : `All tests ${PASS}.`;
     console.log(`
 ========================================================================
 ${message}

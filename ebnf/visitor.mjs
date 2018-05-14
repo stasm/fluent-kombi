@@ -10,7 +10,7 @@ export default {
     ExportNamedDeclaration(node, state, cont) {
         let {declaration, leadingComments} = node;
         let comments = leadingComments && {
-           block_comments: leadingComments
+            block_comments: leadingComments
                 .filter(comm => comm.type === "CommentBlock")
                 .map(comm => cont(comm, state))
         };
@@ -20,7 +20,7 @@ export default {
         let {declarations, leadingComments} = node;
         let [declaration] = declarations;
         let comments = leadingComments && {
-           block_comments: leadingComments
+            block_comments: leadingComments
                 .filter(comm => comm.type === "CommentBlock")
                 .map(comm => cont(comm, state))
         };
