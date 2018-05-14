@@ -10,7 +10,8 @@ import {
 
 /* ------------------------------- */
 /* An FTL file defines a Resource. */
-export const Resource = defer(() =>
+export
+let Resource = defer(() =>
     repeat(
         either(
             blank_line,
@@ -18,7 +19,8 @@ export const Resource = defer(() =>
     .map(to_array)
     .map(into(FTL.Resource)));
 
-export const Entry = defer(() =>
+export
+let Entry = defer(() =>
     either(
         Message,
         Term,
@@ -28,7 +30,7 @@ export const Entry = defer(() =>
             Comment),
         Junk));
 
-const Message = defer(() =>
+let Message = defer(() =>
     sequence(
         maybe(Comment).as("comment"),
         Identifier.as("id"),
@@ -47,7 +49,7 @@ const Message = defer(() =>
     .map(to_object)
     .map(into(FTL.Message)));
 
-const Term = defer(() =>
+let Term = defer(() =>
     sequence(
         maybe(Comment).as("comment"),
         TermIdentifier.as("id"),
@@ -60,7 +62,7 @@ const Term = defer(() =>
     .map(to_object)
     .map(into(FTL.Term)));
 
-const Attribute = defer(() =>
+let Attribute = defer(() =>
     sequence(
         break_indent,
         char("."),
@@ -72,7 +74,7 @@ const Attribute = defer(() =>
     .map(to_object)
     .map(into(FTL.Attribute)));
 
-const Comment = defer(() =>
+let Comment = defer(() =>
     repeat1(
         sequence(
             char("#"),
@@ -82,7 +84,7 @@ const Comment = defer(() =>
     .map(to_string)
     .map(into(FTL.Comment)));
 
-const GroupComment = defer(() =>
+let GroupComment = defer(() =>
     repeat1(
         sequence(
             string("##"),
@@ -92,7 +94,7 @@ const GroupComment = defer(() =>
     .map(to_string)
     .map(into(FTL.GroupComment)));
 
-const ResourceComment = defer(() =>
+let ResourceComment = defer(() =>
     repeat1(
         sequence(
             string("###"),
@@ -102,7 +104,7 @@ const ResourceComment = defer(() =>
     .map(to_string)
     .map(into(FTL.ResourceComment)));
 
-const Junk = defer(() =>
+let Junk = defer(() =>
     repeat1(
         and(
             not(Message),
@@ -119,7 +121,7 @@ const Junk = defer(() =>
 
 /* ----------------------------------------------- */
 /* Patterns consist of TextElements or Placeables. */
-const Pattern = defer(() =>
+let Pattern = defer(() =>
     sequence(
         // Trim leading whitespace.
         maybe(inline_space),
@@ -131,7 +133,7 @@ const Pattern = defer(() =>
     .map(to_object)
     .map(into(FTL.Pattern)));
 
-const TextElement = defer(() =>
+let TextElement = defer(() =>
     repeat1(
         either(
             text_char,
@@ -139,7 +141,7 @@ const TextElement = defer(() =>
     .map(to_string)
     .map(into(FTL.TextElement)));
 
-const Placeable = defer(() =>
+let Placeable = defer(() =>
     sequence(
         char("{"),
         between(
@@ -152,12 +154,12 @@ const Placeable = defer(() =>
     .map(to_object)
     .map(into(FTL.Placeable)));
 
-const BlockExpression = defer(() =>
+let BlockExpression = defer(() =>
     either(
         SelectExpression,
         VariantList));
 
-const InlineExpression = defer(() =>
+let InlineExpression = defer(() =>
     either(
         StringExpression,
         NumberExpression,
@@ -171,13 +173,13 @@ const InlineExpression = defer(() =>
 
 /* ------------------ */
 /* Inline Expressions */
-const StringExpression = defer(() =>
+let StringExpression = defer(() =>
     quoted_text.map(into(FTL.StringExpression)));
 
-const NumberExpression = defer(() =>
+let NumberExpression = defer(() =>
     number.map(into(FTL.NumberExpression)));
 
-const CallExpression = defer(() =>
+let CallExpression = defer(() =>
     sequence(
         Function.as("callee"),
         char("("),
@@ -188,7 +190,7 @@ const CallExpression = defer(() =>
     .map(to_object)
     .map(into(FTL.CallExpression)));
 
-const argument_list = defer(() =>
+let argument_list = defer(() =>
     sequence(
         Argument.as(),
         repeat(
@@ -199,14 +201,14 @@ const argument_list = defer(() =>
     .map(flatten(2))
     .map(to_array));
 
-const Argument = defer(() =>
+let Argument = defer(() =>
     between(
         maybe(inline_space),
         either(
             NamedArgument,
             InlineExpression)));
 
-const NamedArgument = defer(() =>
+let NamedArgument = defer(() =>
     sequence(
         Identifier.as("name"),
         between(
@@ -218,7 +220,7 @@ const NamedArgument = defer(() =>
     .map(to_object)
     .map(into(FTL.NamedArgument)));
 
-const MessageAttributeExpression = defer(() =>
+let MessageAttributeExpression = defer(() =>
     sequence(
         Identifier.as("id"),
         char("."),
@@ -226,7 +228,7 @@ const MessageAttributeExpression = defer(() =>
     .map(to_object)
     .map(into(FTL.AttributeExpression)));
 
-const TermAttributeExpression = defer(() =>
+let TermAttributeExpression = defer(() =>
     sequence(
         TermIdentifier.as("id"),
         char("."),
@@ -234,7 +236,7 @@ const TermAttributeExpression = defer(() =>
     .map(to_object)
     .map(into(FTL.AttributeExpression)));
 
-const TermVariantExpression = defer(() =>
+let TermVariantExpression = defer(() =>
     sequence(
         TermIdentifier.as("id"),
         char("["),
@@ -247,7 +249,7 @@ const TermVariantExpression = defer(() =>
 
 /* ----------------- */
 /* Block Expressions */
-const SelectExpression = defer(() =>
+let SelectExpression = defer(() =>
     sequence(
         SelectorExpression.as("selector"),
         between(
@@ -258,7 +260,7 @@ const SelectExpression = defer(() =>
     .map(to_object)
     .map(into(FTL.SelectExpression)));
 
-const VariantList = defer(() =>
+let VariantList = defer(() =>
     sequence(
         always(null).as("selector"),
         variant_list.as("variants"),
@@ -266,14 +268,14 @@ const VariantList = defer(() =>
     .map(to_object)
     .map(into(FTL.SelectExpression)));
 
-const variant_list = defer(() =>
+let variant_list = defer(() =>
     sequence(
         repeat(Variant),
         DefaultVariant,
         repeat(Variant))
     .map(flatten(1)));
 
-const VariantName = defer(() =>
+let VariantName = defer(() =>
     sequence(
         word,
         repeat(
@@ -284,13 +286,13 @@ const VariantName = defer(() =>
     .map(to_string)
     .map(into(FTL.VariantName)));
 
-const VariantKey = defer(() =>
+let VariantKey = defer(() =>
     either(
         // Meh. It's not really an expression.
         NumberExpression,
         VariantName));
 
-const Variant = defer(() =>
+let Variant = defer(() =>
     sequence(
         break_indent,
         char("["),
@@ -303,7 +305,7 @@ const Variant = defer(() =>
     .map(to_object)
     .map(into(FTL.Variant)));
 
-const DefaultVariant = defer(() =>
+let DefaultVariant = defer(() =>
     sequence(
         break_indent,
         char("*"),
@@ -318,7 +320,7 @@ const DefaultVariant = defer(() =>
     .map(into(FTL.Variant))
     .map(mutate({default: true})));
 
-const SelectorExpression = defer(() =>
+let SelectorExpression = defer(() =>
     either(
         StringExpression,
         NumberExpression,
@@ -329,17 +331,17 @@ const SelectorExpression = defer(() =>
 /* ----------- */
 /* Identifiers */
 
-const Identifier = defer(() =>
+let Identifier = defer(() =>
     identifier.map(into(FTL.Identifier)));
 
-const TermIdentifier = defer(() =>
+let TermIdentifier = defer(() =>
     sequence(
         char("-"),
         identifier)
     .map(to_string)
     .map(into(FTL.Identifier)));
 
-const ExternalIdentifier = defer(() =>
+let ExternalIdentifier = defer(() =>
     sequence(
         char("$"),
         identifier.as("name"))
@@ -347,7 +349,7 @@ const ExternalIdentifier = defer(() =>
     .map(({name}) =>
         new FTL.Identifier(name)));
 
-const Function =
+let Function =
     sequence(
         charset("A-Z"),
         repeat(
@@ -358,7 +360,7 @@ const Function =
 
 /* ------ */
 /* Tokens */
-const identifier =
+let identifier =
     sequence(
         charset("a-zA-Z"),
         repeat(
@@ -366,7 +368,7 @@ const identifier =
     .map(flatten(1))
     .map(to_string);
 
-const comment_line = defer(() =>
+let comment_line = defer(() =>
     either(
         sequence(
             line_end.as()),
@@ -377,7 +379,7 @@ const comment_line = defer(() =>
     .map(to_array)
     .map(to_string));
 
-const word = defer(() =>
+let word = defer(() =>
     repeat1(
         and(
             not(char("[")),
@@ -391,18 +393,18 @@ const word = defer(() =>
 /* ---------- */
 /* Characters */
 
-const backslash = char("\\");
-const quote = char("\"");
+let backslash = char("\\");
+let quote = char("\"");
 
 /* Any Unicode character from BMP excluding C0 control characters, space,
  * surrogate blocks and non-characters (U+FFFE, U+FFFF).
  * Cf. https://www.w3.org/TR/REC-xml/#NT-Char
  * TODO Add characters from other planes: U+10000 to U+10FFFF.
  */
-const regular_char =
+let regular_char =
     charset("\u0021-\uD7FF\uE000-\uFFFD");
 
-const text_char = defer(() =>
+let text_char = defer(() =>
     either(
         inline_space,
         regex(/\\u[0-9a-fA-F]{4}/),
@@ -417,7 +419,7 @@ const text_char = defer(() =>
             not(char("{")),
             regular_char)));
 
-const text_cont = defer(() =>
+let text_cont = defer(() =>
     sequence(
         break_indent,
         and(
@@ -427,7 +429,7 @@ const text_cont = defer(() =>
             not(char("}"))))
     .map(to_string));
 
-const quoted_text_char =
+let quoted_text_char =
     either(
         and(
             not(quote),
@@ -436,15 +438,15 @@ const quoted_text_char =
             backslash,
             quote));
 
-const quoted_text =
+let quoted_text =
     between(
         quote,
         repeat(quoted_text_char))
     .map(to_string);
 
-const digit = charset("0-9");
+let digit = charset("0-9");
 
-const number =
+let number =
     sequence(
         maybe(char("-")),
         repeat1(digit),
@@ -457,27 +459,27 @@ const number =
 
 /* ---------- */
 /* Whitespace */
-const inline_space =
+let inline_space =
     repeat1(
         either(
             char("\u0020"),
             char("\u0009")))
     .map(to_string);
 
-const line_end =
+let line_end =
     either(
         string("\u000D\u000A"),
         char("\u000A"),
         char("\u000D"),
         eof());
 
-const blank_line =
+let blank_line =
     sequence(
         maybe(inline_space),
         line_end)
     .map(to_string);
 
-const break_indent =
+let break_indent =
     sequence(
         line_end,
         repeat(blank_line),
