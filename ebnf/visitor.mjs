@@ -1,6 +1,6 @@
 export default {
     File(node, state, cont) {
-        return cont(node.program);
+        return cont(node.program, state);
     },
     Program(node, state, cont) {
         return node.body
@@ -15,7 +15,9 @@ export default {
         let [declaration] = declarations;
         return cont(declaration, {
             ...state,
-            comments: leadingComments.map(comm => comm.value),
+            comments: leadingComments
+                .filter(comm => comm.type === "CommentBlock")
+                .map(comm => cont(comm, state)),
         });
     },
     VariableDeclarator(node, state, cont) {
@@ -60,6 +62,9 @@ export default {
     },
     RegExpLiteral({pattern}, state, cont) {
         return {type: "Terminal", value: pattern};
+    },
+    CommentBlock({value}, state, cont) {
+        return {type: "Comment", value};
     },
 };
 

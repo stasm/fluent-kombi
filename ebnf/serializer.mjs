@@ -9,11 +9,11 @@ function serialize_rule(rule, state) {
 
 function serialize_comments(comments) {
     let contents = [];
-    for (let line of comments) {
-        if (/^[ =*/-]*$/.test(line)) {
+    for (let {value} of comments) {
+        if (/^[ =*/-]*$/.test(value)) {
             contents.push("");
         } else {
-            contents.push(`/*${line} */`);
+            contents.push(`/*${value}*/`);
         }
     }
     return contents.length

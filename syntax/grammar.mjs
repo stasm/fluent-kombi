@@ -51,10 +51,11 @@ const number =
     .map(flatten(2))
     .map(to_string);
 
-// Any Unicode character from BMP excluding C0 control characters, space,
-// surrogate blocks and non-characters (U+FFFE, U+FFFF).
-// Cf. https://www.w3.org/TR/REC-xml/#NT-Char
-// TODO Add characters from other planes: U+10000 to U+10FFFF.
+/* Any Unicode character from BMP excluding C0 control characters, space,
+ * surrogate blocks and non-characters (U+FFFE, U+FFFF).
+ * Cf. https://www.w3.org/TR/REC-xml/#NT-Char
+ * TODO Add characters from other planes: U+10000 to U+10FFFF.
+ */
 const other_char =
     charset("\u0021-\uD7FF\uE000-\uFFFD");
 
@@ -470,8 +471,9 @@ const Entry =
             Comment),
         Junk);
 
-
-export const Resource =
+export
+/* An FTL file defines a Resource. */
+const Resource =
     repeat(
         either(
             blank_line,
