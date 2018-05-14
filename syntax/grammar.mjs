@@ -471,9 +471,8 @@ const Entry =
             Comment),
         Junk);
 
-export
 /* An FTL file defines a Resource. */
-const Resource =
+export const Resource =
     repeat(
         either(
             blank_line,

@@ -1,9 +1,9 @@
 export default
 function serialize_rule(rule, state) {
-    let {name, expression, comments} = rule;
+    let {name, expression, block_comments} = rule;
     let lhs = name.padEnd(state.max_name_length);
     let rhs = serialize_expression(expression, state);
-    let comment = serialize_comments(comments);
+    let comment = serialize_comments(block_comments);
     return `${comment}${lhs} ::= ${rhs}`;
 }
 

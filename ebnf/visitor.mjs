@@ -8,23 +8,29 @@ export default {
             .filter(production => production !== undefined);
     },
     ExportNamedDeclaration(node, state, cont) {
-        return cont(node.declaration, state);
+        let {declaration, leadingComments} = node;
+        let comments = leadingComments && {
+           block_comments: leadingComments
+                .filter(comm => comm.type === "CommentBlock")
+                .map(comm => cont(comm, state))
+        };
+        return cont(declaration, {...state, ...comments});
     },
     VariableDeclaration(node, state, cont) {
-        let {declarations, leadingComments = []} = node;
+        let {declarations, leadingComments} = node;
         let [declaration] = declarations;
-        return cont(declaration, {
-            ...state,
-            comments: leadingComments
+        let comments = leadingComments && {
+           block_comments: leadingComments
                 .filter(comm => comm.type === "CommentBlock")
-                .map(comm => cont(comm, state)),
-        });
+                .map(comm => cont(comm, state))
+        };
+        return cont(declaration, {...state, ...comments});
     },
     VariableDeclarator(node, state, cont) {
         let {id: {name}, init} = node;
-        let {comments} = state;
+        let {block_comments = []} = state;
         let expression = cont(init, state);
-        return {type: "Rule", name, expression, comments};
+        return {type: "Rule", name, expression, block_comments};
     },
     CallExpression(node, state, cont) {
         let {callee, arguments: args} = node;
