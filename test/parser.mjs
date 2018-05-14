@@ -6,7 +6,8 @@ import fluent from '../';
 const fixtures_dir = process.argv[2];
 
 if (!fixtures_dir) {
-    console.error("Specify the fixtures directory.");
+    console.error(
+        "Usage: node --experimental-modules parser.mjs FIXTURES_DIR");
     process.exit(1);
 }
 

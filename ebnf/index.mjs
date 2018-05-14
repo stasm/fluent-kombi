@@ -13,6 +13,6 @@ function ebnf(source) {
     };
     return rules
         .map(rule => serialize(rule, state))
-        .join("\n");
+        .join("");
 }
 

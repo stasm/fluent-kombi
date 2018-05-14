@@ -4,7 +4,7 @@ function serialize_rule(rule, state) {
     let lhs = name.padEnd(state.max_name_length);
     let rhs = serialize_expression(expression, state);
     let comment = serialize_comments(block_comments);
-    return `${comment}${lhs} ::= ${rhs}`;
+    return `${comment}${lhs} ::= ${rhs}\n`;
 }
 
 function serialize_comments(comments) {
