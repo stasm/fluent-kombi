@@ -1,4 +1,7 @@
 export default {
+    File(node, state, cont) {
+        return cont(node.program);
+    },
     Program(node, state, cont) {
         return node.body
             .map(statement => cont(statement, state))
@@ -8,13 +11,18 @@ export default {
         return cont(node.declaration, state);
     },
     VariableDeclaration(node, state, cont) {
-        let [declaration] = node.declarations;
-        return cont(declaration, state);
+        let {declarations, leadingComments = []} = node;
+        let [declaration] = declarations;
+        return cont(declaration, {
+            ...state,
+            comments: leadingComments.map(comm => comm.value),
+        });
     },
     VariableDeclarator(node, state, cont) {
         let {id: {name}, init} = node;
+        let {comments} = state;
         let expression = cont(init, state);
-        return {type: "Rule", name, expression};
+        return {type: "Rule", name, expression, comments};
     },
     CallExpression(node, state, cont) {
         let {callee, arguments: args} = node;
@@ -47,12 +55,12 @@ export default {
         let {name} = node;
         return {type: "Symbol", name};
     },
-    Literal(node, state, cont) {
-        let value = node.regex
-            ? node.regex.pattern
-            : escape(node.value);
-        return {type: "Terminal", value};
-    }
+    StringLiteral({value}, state, cont) {
+        return {type: "Terminal", value: escape(value)};
+    },
+    RegExpLiteral({pattern}, state, cont) {
+        return {type: "Terminal", value: pattern};
+    },
 };
 
 function escape(str) {

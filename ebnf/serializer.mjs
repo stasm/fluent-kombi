@@ -1,9 +1,12 @@
 export default
 function serialize_rule(rule, state) {
-    let {name, expression} = rule;
+    let {name, expression, comments} = rule;
     let lhs = name.padEnd(state.max_name_length);
     let rhs = serialize_expression(expression, state);
-    return `${lhs} ::= ${rhs}`;
+    let comment = comments.map(line => `//${line}`).join("\n");
+    return comment
+        ? `${comment}\n${lhs} ::= ${rhs}`
+        : `${lhs} ::= ${rhs}`;
 }
 
 function serialize_expression(expression, state) {

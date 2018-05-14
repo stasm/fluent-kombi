@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/stasm/fluent-kombi#readme",
   "devDependencies": {
-    "acorn": "^5.5.3",
+    "babylon": "^6.18.0",
     "cli-color": "^1.2.0",
     "eslint": "^4.19.1",
     "fluent": "^0.6.4",
