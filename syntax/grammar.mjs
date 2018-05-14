@@ -461,7 +461,7 @@ const Junk =
     .map(to_string)
     .map(into(FTL.Junk));
 
-const Entry =
+export const Entry =
     either(
         Message,
         Term,
