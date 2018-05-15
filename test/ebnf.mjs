@@ -1,6 +1,6 @@
 import color from "cli-color";
 import difflib from "difflib";
-import ebnf from "../ebnf";
+import ebnf from "../lib/ebnf.mjs";
 import {readfile, PASS, FAIL} from "./util.mjs";
 
 let args = process.argv.slice(2);

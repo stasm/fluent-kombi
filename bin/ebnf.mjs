@@ -1,7 +1,7 @@
 import fs from "fs";
 import readline from "readline";
 import parse_args from "minimist";
-import ebnf from "../ebnf";
+import ebnf from "../lib/ebnf.mjs";
 
 const argv = parse_args(process.argv.slice(2), {
     boolean: ["help"],

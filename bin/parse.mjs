@@ -1,7 +1,7 @@
 import fs from "fs";
 import readline from "readline";
 import parse_args from "minimist";
-import fluent from "../";
+import {Resource} from "../syntax/grammar.mjs";
 
 const argv = parse_args(process.argv.slice(2), {
     boolean: ["help"],
@@ -68,7 +68,7 @@ function parse_file(file_path) {
 
 
 function parse(ftl) {
-    fluent.run(ftl).fold(
+    Resource.run(ftl).fold(
         ast => console.log(JSON.stringify(ast, null, 4)),
         err => console.error(err));
 }

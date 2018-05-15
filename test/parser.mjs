@@ -1,7 +1,7 @@
 import assert from "assert";
 import path from "path";
+import {Resource} from "../syntax/grammar.mjs";
 import {readdir, readfile, diff, PASS, FAIL} from "./util.mjs";
-import fluent from "../";
 
 const fixtures_dir = process.argv[2];
 
@@ -37,7 +37,7 @@ async function main(fixtures_dir) {
             continue;
         }
 
-        fluent.run(ftl_source).fold(
+        Resource.run(ftl_source).fold(
             assert_equal,
             err => assert.fail(err));
 
