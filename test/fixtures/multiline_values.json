@@ -214,7 +214,7 @@
                 "elements": [
                     {
                         "type": "TextElement",
-                        "value": "Leading and trailing whitespace.     "
+                        "value": "Leading and trailing whitespace."
                     }
                 ]
             },

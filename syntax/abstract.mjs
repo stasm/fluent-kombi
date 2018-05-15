@@ -18,8 +18,7 @@ export default function into(ctor) {
             return ({name, value}) =>
                 new ctor(name, value);
         case FTL.Pattern:
-            return ({elements}) =>
-                new ctor(elements);
+            return into_pattern;
         case FTL.Placeable:
             return ({expression}) =>
                 new ctor(expression);
@@ -41,4 +40,41 @@ export default function into(ctor) {
         default:
             return (...args) => new ctor(...args);
     }
+}
+
+function into_pattern(elements) {
+    return new FTL.Pattern(
+        elements
+            .reduce(join_adjacent_text, [])
+            .map(trim_text_at_extremes)
+            .filter(remove_empty_text));
+}
+
+function join_adjacent_text(acc, cur) {
+    let prev = acc[acc.length - 1];
+    if (prev
+        && prev instanceof FTL.TextElement
+        && cur instanceof FTL.TextElement) {
+        prev.value += cur.value;
+        return acc;
+    } else {
+        return acc.concat(cur);
+    }
+}
+
+function trim_text_at_extremes(element, index, array) {
+    if (element instanceof FTL.TextElement) {
+        if (index === 0) {
+            element.value = element.value.trimLeft();
+        }
+        if (index === array.length - 1) {
+            element.value = element.value.trimRight();
+        }
+    }
+    return element;
+}
+
+function remove_empty_text(element) {
+    return !(element instanceof FTL.TextElement)
+        || element.value !== "";
 }

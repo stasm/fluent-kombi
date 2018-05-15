@@ -122,16 +122,19 @@ let Junk = defer(() =>
 /* ----------------------------------------------- */
 /* Patterns consist of TextElements or Placeables. */
 let Pattern = defer(() =>
-    sequence(
-        // Trim leading whitespace.
-        maybe(inline_space),
-        maybe(text_cont),
-        repeat1(
-            either(
-                TextElement,
-                Placeable)).as("elements"))
-    .map(to_object)
+    repeat1(
+        PatternElement)
+    // Flatten indented Placeables.
+    .map(flatten(1))
     .map(into(FTL.Pattern)));
+
+let PatternElement = defer(() =>
+    either(
+        TextElement,
+        Placeable,
+        sequence(
+            break_indent.map(into(FTL.TextElement)),
+            Placeable)));
 
 let TextElement = defer(() =>
     repeat1(
@@ -429,7 +432,8 @@ let text_cont = defer(() =>
             not(char(".")),
             not(char("*")),
             not(char("[")),
-            not(char("}"))))
+            not(char("}")),
+            text_char))
     .map(to_string));
 
 let quoted_text_char =
