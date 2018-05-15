@@ -67,5 +67,6 @@ function from_file(file_path) {
 }
 
 function print_ebnf(source) {
-    console.log(ebnf(source));
+    // Each EBNF rule already ends with \n.
+    process.stdout.write(ebnf(source));
 }
